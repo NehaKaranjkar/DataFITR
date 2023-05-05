@@ -58,6 +58,9 @@ def generate(dist):
     data=np.random.normal(1,10,100)# just some dummy data to find the number of params.
     numparams=len(k.fit(data))
     st.write("{} parameters are required to generate this distribution including size. Please follow this format loc,scale,c1,c2,..,size".format(numparams+1))
+    pathtodist='https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.'+dist+'.html'
+    #st.write(pathtodist)
+    st.info(f"""For more info about the distribution refer **{pathtodist}**""")
     if numparams>2:
 
         k=st.text_input("Enter the params separated by comas, loc,scale,c,size")
