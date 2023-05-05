@@ -285,7 +285,8 @@ if uploaded_file is not None:
                   
                 str_gen=str_gen_code.format("mean","cov","num_datapoints")
                 output=str_lib+str_params+str_gen
-                st.subheader("Adjust the num_datapoints parameter to change the number of points to generate")
+                st.markdown('<p class="small-font">Adjust the num_datapoints parameter to change the number of points to generate', unsafe_allow_html=True)
+    
                 st.code(output)
             
         
