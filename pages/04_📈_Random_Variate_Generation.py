@@ -57,8 +57,9 @@ def generate(dist):
     k=getattr(stats,dist) 
     data=np.random.normal(1,10,100)# just some dummy data to find the number of params.
     numparams=len(k.fit(data))
-    st.write("The number of params required",numparams)
+    st.write("{} parameters are required to generate this distribution including size. Please follow this format loc,scale,c1,c2,..,size".format(numparams+1))
     if numparams>2:
+
         k=st.text_input("Enter the params separated by comas, loc,scale,c,size")
         
         if k:
@@ -76,6 +77,7 @@ def generate(dist):
             st.code(output)
             #st.text_area(label="Code to generate the data",value=output)
     else:
+
         k=st.text_input("Enter the params separated by comas, loc,scale,size")
         if k:
             lis=k.split(",")
