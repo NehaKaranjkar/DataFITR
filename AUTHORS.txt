@@ -1,14 +1,12 @@
 
 Lekshmi P. <lekshmi20231101@iitgoa.ac.in>
-School of Mathematics and Computer Science
-IIT Goa
+PhD student at the School of Mathematics and Computer Science, IIT Goa
 
+Tushar Lone
+PhD student at the School of Mathematics and Computer Science, IIT Goa
 
-Neha Karanjkar <nehak@iitgoa.ac.in>
-School of Mathematics and Computer Science
-IIT Goa
+Neha Karanjkar
+Assistant Professor in Computer Science and Engineering, IIT Goa
+https://nehakaranjkar.github.io/
 
-Tushar Lone <tushar20231102@iitgoa.ac.in>
-School of Mathematics and Computer Science
-IIT Goa
 
