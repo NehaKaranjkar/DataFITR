@@ -24,7 +24,7 @@ def main():
     
     
     st.markdown("""<style>.big-font {font-size:20px !important;}</style>""", unsafe_allow_html=True)
-    st.markdown('<p class="big-font">DatafITR is a graphical tool for Input Modeling that guides the user in a step by step manner. Input Modeling is a process of fitting a distribution to the input data and determining the parameters of that distribution. DataFITR acts as a tool to aid the process of building a Simulation Digital Twin as Input Modeling is one of the most important steps towards building a Digital Twin.  The tool expects the data to be in a csv format where the column name is the name of the process variable and the rows are the observations. Once a good fit is found the tool produces code that can be inserted by the user</p>', unsafe_allow_html=True)
+    st.markdown('<p class="big-font">DataFITR is a graphical tool for Input Modeling that guides the user in a step by step manner. Input Modeling is a process of fitting a distribution to the input data and determining the parameters of that distribution. DataFITR acts as a tool to aid the process of building a Simulation Digital Twin as Input Modeling is one of the most important steps towards building a Digital Twin.  The tool expects the data to be in a csv format where the column name is the name of the process variable and the rows are the observations. Once a good fit is found the tool produces code that can be inserted by the user</p>', unsafe_allow_html=True)
     st.image('./MISC/sampledata.PNG',width=600,caption="Expected CSV file format")
     IIDtab,Gausmulttab,arbmulttab,TStab,=st.tabs(["Time independent Data","Multivariate Gaussian Data","Arbitrary Multivariate Data","Time Series",])
     

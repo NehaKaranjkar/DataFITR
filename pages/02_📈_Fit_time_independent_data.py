@@ -78,6 +78,7 @@ def dfinfo(df):
     buffer=io.StringIO()
     df.info(buf=buffer)
     lines = buffer.getvalue ().split ('\n')
+    #st.write(lines)
     # lines to print directly
     #lines_to_print = [0, 1, 2, -2, -3]
     #for i in range(len(lines)):
@@ -85,8 +86,22 @@ def dfinfo(df):
     # lines to arrange in a df
     list_of_list = []
     for x in lines [5:-3]:
-        list = x.split ()
-        list_of_list.append (list)
+        listouter = x.split ()
+        listinner=[listouter[0],]
+        shrt=""
+        for i in range(1,len(listouter)-3):
+            shrt+=listouter[i]
+        #st.write(shrt,listouter[-3:])
+        listinner.append(shrt)
+        listinner.extend(listouter[-3:])
+       
+            
+        
+            
+            
+            
+        list_of_list.append (listinner)
+        
     info_df = pd.DataFrame (list_of_list, columns=['index', 'Column', 'Non-null-Count', 'null', 'Dtype'])
     info_df.drop (columns=['index', 'null'], axis=1, inplace=True)
     #st.dataframe(info_df)
@@ -354,10 +369,12 @@ def IM_uni(uploaded_file,uploaded_file_format):
             datatype_autofilloption=finddatatype_autofill(df[inpvar])
             datatype_list=['real valued','integer valued']
             default_ind=datatype_list.index(datatype_autofilloption)
+            #st.write(default_ind)
             
-            
-            datatype_option = st.selectbox('Datatype of the column:', datatype_list,index=default_ind)
-            if datatype_option=='integer valued':
+            if datatype_list[default_ind]=='real valued':
+                datatype_option = st.selectbox('Datatype of the column:', ['real valued'],index=default_ind)
+            else:
+                datatype_option = st.selectbox('Datatype of the column:', datatype_list,index=default_ind)
                 st.warning("The datatype of the column is inferred from the data. Click on the dropdown if you wish to change it.")
             continuous_all=getcontinuousdist()[70:80]
             continuous_popular=['expon','norm','lognorm','triang','uniform','weibull_min','gamma']
@@ -432,6 +449,10 @@ def IM_uni(uploaded_file,uploaded_file_format):
             restyp,finresult,plotdata,pval=my_function(df[inpvar],distlist,distributions,datatyp,dataname,bins,'ks',)
             if restyp=='constant':
                 st.write("The data to fit is a contant value and the value is  "+str(pval))
+                constdict={"value":[pval],'type':['constant'],'var':[inpvar+'.csv']}
+                constdf=pd.DataFrame(constdict)
+                st.write(constdf)
+                updateFile(fullpath,constdf)
                 
             else:
             
@@ -512,6 +533,7 @@ def IM_uni(uploaded_file,uploaded_file_format):
                         result_df = finresult.sort_values(by = goodnessoffit)
                         up_df=result_df.copy()
                         up_df['var']=filename
+                        #st.write(fullpath)
                         updateFile(fullpath,up_df)
                         st.session_state['df']=up_df
                         #st.write(up_df)

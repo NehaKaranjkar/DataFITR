@@ -56,27 +56,43 @@ try:
         # csv files in the path
             
             files = glob.glob(fullpath + "/*.csv")
-            #figs=glob.glob(fullpath + "/*.png")
-              
             for i in files:
+                checkdf=pd.read_csv(i)
+                if checkdf.empty:
+                    os.remove(i)
+            
+            #figs=glob.glob(fullpath + "/*.png")
+            files = glob.glob(fullpath + "/*.csv")
+            for i in files:
+                
                 df=pd.read_csv(i)
-                #st.write(i,j)
+                #st.write(i)
                 #st.write(df[5])
                 #st.table(df)
                 st.subheader(df['var'][0][:-4])
-                col1,col2=st.columns(2)
-                with col1:
-                    st.dataframe(df[['Test','KStest','SSE','Chi squared Test']])
-                with col2:
-                    figname=i[:-3]+'png'
-                    st.image(figname, width=400)
+                #st.write(df['var'][0])
+                try:
+                    
+                    col1,col2=st.columns(2)
+                    with col1:
+                        st.dataframe(df[['Test','KStest','SSE','Chi squared Test']])
+                        
+                    with col2:
+                        figname=i[:-3]+'png'
+                        st.image(figname, width=400)
+                except:
+                    #st.subheader(df['var'][0])
+                    col1,col2=st.columns(2)
+                    with col1:
+                        st.dataframe(df[["value",'type']])
+                    
         else:
             st.write("No such folder/directory is found or folder is empty. Please check")
 except:
     st.write("Please upload a csv file with data to fit in the IID fitting tab and fit a variable to view the output")
     
     
-    
+   
   
     
 
