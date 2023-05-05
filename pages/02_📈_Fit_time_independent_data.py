@@ -677,7 +677,7 @@ with data_col:
     
 
     st.markdown('''Please upload a CSV file with the variables to fit and proceed.''')
-    uploaded_file = st.file_uploader("Choose a file. Please ensure that the column names have no space character in it.")
+    uploaded_file = st.file_uploader("Choose a file.")
     
         
     
