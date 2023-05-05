@@ -1,0 +1,28 @@
+=====================================
+Installation instructions
+=====================================
+
+PREREQUISITES:
+
+	Linux (tested on Ubuntu 22.04 LTS)
+	python >= version 3.9.7
+	All the pacakges in requirements.txt file
+
+INSTALLATION INSTRUCTIONS (FOR LINUX):
+
+	STEP 1. Clone the github repo 
+			
+
+
+	STEP 2. run the command in a terminal inside the DataFITR folder
+		  pip install -r requirements.txt
+
+		
+	STEP 3. After successful installation, run the following command in the terminal inside the folder
+		  streamlit run 📈_DataFITR_in_10_minutes.py 
+
+
+	
+
+
+	
