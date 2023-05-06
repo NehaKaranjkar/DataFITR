@@ -21,7 +21,7 @@ import streamlit as st
 import pandas as pd
 import scipy.stats as stats,time
 from io import StringIO
-#sys.path.append('/home/lekshmi/Downloads/my_app/IM') 
+sys.path.append('/home/lekshmi/Downloads/my_app/IM') 
 sys.path.append('./IM') 
 #import modular_IM
 from IM import modular_IM
@@ -162,13 +162,17 @@ def ifpathExists(path):
         return False
     
 def ifFileExists(path,filename):
+    
+    st.write(path)
     dir_list=os.listdir(path)
+    
     if filename in dir_list:
         return True
     else:
         return False
     
 def fileCreate(path,filename):
+    st.write(os.getcwd())
     os.chdir(path)
     #df=pd.DataFrame(list())
     df=pd.DataFrame()
@@ -237,6 +241,7 @@ def IM_uni(uploaded_file,uploaded_file_format):
         folder_name=filenamevalue.split()[0][:-4]#removing .csv from name
         folder_name=filenamevalue.split(".")[0]#removing .csv from name
         
+        #path='/home/lekshmi/Downloads/app5may/DataFITR/output'
         path='./output'
         #path='/home/ec2-user/DataFITR/output'
         
@@ -391,17 +396,20 @@ def IM_uni(uploaded_file,uploaded_file_format):
                     datatyp='discrete'
                     distlist_userselect = st.multiselect("Choose distributions to fit", ['discrete_all','discrete_popular'],default='discrete_popular',key='dislist_user')
             
-            old_fileclear=st.checkbox("Clear the output file if it exists and create a new one")
+            #old_fileclear=st.checkbox("Clear the output file if it exists and create a new one")
+            old_fileclear=False
             fname=st.text_input("enter a name for the output file where the goodness of fit values will be stored",key='opfilename',value=inpvar)
             filename=fname+".csv"
             fullpath=path+"/"+filename
             fullpathfig=path+"/"+fname+'.png'
             
             if old_fileclear and ifFileExists(path, filename):
+                #st.write(path)
                 os.chdir(path)
                 os.remove(filename)
                 fileCreate(path,filename)
             elif ifFileExists(path, filename)==False:
+                st.write(fullpath)
                 fileCreate(path,filename)
             elif old_fileclear==0 and ifFileExists(path, filename)==1:
                 os.chdir(path)
@@ -706,7 +714,11 @@ st.sidebar.image("./MISC/datafitrlogo.PNG", use_column_width=True)
 if uploaded_file is not None:
     uploaded_file_format=is_CSV(uploaded_file.name)
     #st.write(uploaded_file_format,uploaded_file)
-    IM_uni(uploaded_file, uploaded_file_format)
+    try:
+        st.write(df.describe(include="all"))
+        IM_uni(uploaded_file, uploaded_file_format)
+    except:
+        st.warning("Please upload a csv file. which adheres to the right format as mentioned in the documentation")
     #st.sidebar.image("/home/lekshmi/Downloads/DataFitter/MISC/datafitrlogo.PNG", use_column_width=True)
 else:
     st.warning("Please upload a csv file to proceed")
