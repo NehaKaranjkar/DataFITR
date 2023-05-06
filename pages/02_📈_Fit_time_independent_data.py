@@ -227,12 +227,13 @@ def finddatatype_autofill(data):
     
     
     
-def IM_uni(uploaded_file,uploaded_file_format):
+def IM_uni(uploaded_file,uploaded_file_format,df):
     if uploaded_file_format  in['csv','CSV'] :
         
         st.header("Data Exploration")
           
-        df = pd.read_csv(uploaded_file)
+        #df = pd.read_csv(uploaded_file)
+        #st.write(df)
         filenamevalue=uploaded_file.name
         folder_name=filenamevalue.split()[0][:-4]#removing .csv from name
         folder_name=filenamevalue.split(".")[0]#removing .csv from name
@@ -704,22 +705,31 @@ with button_col:
 #st.sidebar.image("/home/lekshmi/Downloads/DataFitter/MISC/datafitrlogo.PNG", use_column_width=True)
 st.sidebar.image("./MISC/datafitrlogo.PNG", use_column_width=True)
 try:
-    
+    #uploaded_file = st.file_uploader("Choose a file.")
     if uploaded_file is not None:
         uploaded_file_format=is_CSV(uploaded_file.name)
         if uploaded_file_format  in['csv','CSV'] :
-            df = pd.read_csv(uploaded_file)
+            #uploaded_file = st.file_uploader("Choose a file.")
+            #st.write(uploaded_file)
+            df1 = pd.read_csv(uploaded_file)
+            #st.write(df1)
             
-            startcheck=df.describe(include="all")
+            startcheck=df1.describe(include="all")
             
             
         
-            IM_uni(uploaded_file, uploaded_file_format)
+    
+            
+            
+        
+            IM_uni(uploaded_file, uploaded_file_format,df1)
         #st.sidebar.image("/home/lekshmi/Downloads/DataFitter/MISC/datafitrlogo.PNG", use_column_width=True)
     else:
         st.warning("Please upload a csv file to proceed")
 except:
     st.warning("Please upload a csv file which adheres to the format mentioned in the documentation.")
+    #uploaded_file = st.file_uploader("Choose a file.")
+    
     
 
         
