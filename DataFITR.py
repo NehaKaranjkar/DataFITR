@@ -14,7 +14,7 @@ import streamlit as st
 #from IM import kde_silverman_both
 
 def main():
-    st.set_page_config(page_title="DataFITR",page_icon="datafitrlogo.png",layout="wide")
+    st.set_page_config(page_title="DataFITR",page_icon="📈",layout="wide")
     st.image("./MISC/datafitrlogo.PNG",width=450)
     
     #st.title("DataFITR")
@@ -54,7 +54,7 @@ def main():
     
     st.markdown("""---""")
     st.subheader("Source code")
-    st.markdown("[(Github link of the repo)](https://github.com/LekshmiPremkumar/DataFITR)")
+    st.markdown("[(Github link of the repo)](https://github.com/NehaKaranjkar/DataFITR)")
     
 
 

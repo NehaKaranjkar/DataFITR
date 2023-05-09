@@ -94,7 +94,7 @@ def numcolerror():
     
 
 
-st.set_page_config(page_title="DataFITR",page_icon="datafitrlogo.png",layout="wide")
+st.set_page_config(page_title="DataFITR",page_icon="📈",layout="wide")
 
 st.sidebar.subheader("Modeling of multivariate gaussian data")
 

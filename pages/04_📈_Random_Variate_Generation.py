@@ -94,6 +94,8 @@ def generate(dist):
             output=str_lib+str_gen
             st.code(output)
             
+            
+st.set_page_config(page_title="DataFITR",page_icon="📈",layout="wide")            
 st.subheader("Random Variate Generation")
 st.markdown("---")    
 st.sidebar.header("Random Variate Generation")

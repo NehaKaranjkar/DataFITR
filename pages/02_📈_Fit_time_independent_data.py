@@ -194,7 +194,7 @@ def is_CSV(filename):
    return filename.split(".")[1]
 
 
-#st.set_page_config(page_title="DataFITR",page_icon="./MISC/datafitrlogo.png",layout="wide")
+st.set_page_config(page_title="DataFITR",page_icon="📈",layout="wide")
 
 
 

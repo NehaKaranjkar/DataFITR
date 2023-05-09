@@ -24,14 +24,14 @@ def ifnotemptydir(path):
         return True
     else:
         return False
-    
+st.set_page_config(page_title="DataFITR",page_icon="📈",layout="wide")  
 st.subheader("Output Summary")
 st.markdown("---")
 st.sidebar.subheader("View Output Summary")
 st.sidebar.image("./MISC/datafitrlogo.PNG", use_column_width=True)
 
 try:
-    #st.set_page_config(page_title="DataFITR",page_icon="chart_with_upwards_trend",layout="wide")    
+    
     #path=st.text_input("Enter the path to the result folder",key='pathtoresult')
     
     #st.image("./MISC/datafitrlogo.PNG",width=400)
