@@ -115,7 +115,7 @@ with button_col:
     st.markdown('''If you do not have a dataset and are curious to know how this tool works, download the CSV file and proceed.                                                                                                                                                
                 ''')
     
-    df = pd.read_csv("./MISC/sampledata.csv")
+    df = pd.read_csv("./MISC/sampledatamultivariate.csv")
     csv = convert_df(df)
     
     st.download_button(
