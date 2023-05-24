@@ -214,6 +214,7 @@ if uploaded_file is not None:
                     if corrval in correlation[i].values:
                         corrlist.append(i)
         #st.write(corrlist)
+        corrlist=set(corrlist)
         multivars_inp=st.multiselect("Select the variables with correlation", corrlist,key='multivarcols')
         continuous_popular=['expon','norm','lognorm','triang','uniform','weibull_min','gamma']
         discrete_popular=['binom','poisson','geom']
