@@ -147,7 +147,8 @@ def getcontinuousdist():
         continuous_all.append(dist)
         
     for i in ['levy_stable','studentized_range','kstwo','skew_norm','vonmises','trapezoid','reciprocal']:
-        continuous_all.remove(i)
+        if i in continuous_all:
+            continuous_all.remove(i)
     return continuous_all
 @st.cache
 def getdiscretedist():
