@@ -177,7 +177,7 @@ if uploaded_file is not None:
             st.pyplot(fig1)
     
         with corrthreshold_col:
-            corr_triupper=correlation.where(~np.tril(np.ones(correlation.shape)).astype(np.bool))
+            corr_triupper=correlation.where(~np.tril(np.ones(correlation.shape)).astype(bool))
             corr_triupper=corr_triupper.stack()
             #st.caption(":red[Columns with a pearson correlation value greater than 0.5 and their respective correlation value]")
             st.markdown('<p class="big-font">Columns with a pearson correlation value greater than 0.5 and their respective correlation value', unsafe_allow_html=True)
