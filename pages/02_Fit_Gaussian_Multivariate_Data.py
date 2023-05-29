@@ -207,7 +207,8 @@ def IM_MVG(df):
         for i in cols:
             plt.subplot(len(cols),3,j)
             plt.tight_layout()
-            a=sns.distplot(df[i],bins=100,rug=True)
+            a=sns.histplot(df[i],bins=100,kde=True)
+            #a=sns.distplot(df[i],bins=100,rug=True)
             a.set_xlabel(i,fontsize=15)
             a.set_ylabel("density",fontsize=15)
             j=j+1
@@ -293,8 +294,8 @@ def IM_MVG(df):
             # Creating plot
             ax.scatter3D(df[selected_x_axis], df[selected_y_axis],df[selected_z_axis], color = "blue")
             ax.set_xlabel(selected_x_axis, fontweight ='bold')
-            ax.set_ylabel(selected_x_axis, fontweight ='bold')
-            ax.set_zlabel(selected_x_axis, fontweight ='bold')
+            ax.set_ylabel(selected_y_axis, fontweight ='bold')
+            ax.set_zlabel(selected_z_axis, fontweight ='bold')
             plt.title("3D scatter plot")
             st.pyplot(fig)
             # show plot
@@ -322,7 +323,7 @@ def IM_MVG(df):
                 #fig.update_traces(marker_size=st.session_state.marker_size)
                 
                 ax.set_xlabel(selected_x_axis, fontweight ='bold')
-                ax.set_ylabel(selected_x_axis, fontweight ='bold')
+                ax.set_ylabel(selected_y_axis, fontweight ='bold')
                 
                 plt.title("2D scatter plot")
                 st.pyplot(fig)
