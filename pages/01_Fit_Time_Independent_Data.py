@@ -228,9 +228,9 @@ def IM_uni(df):
     st.header("Data Exploration")
     
     with st.expander("Click here to view the results of Exploratory Data Analysis"): 
-        folder_name='SampleCSVfile'
+        #folder_name='SampleCSVfile'
         #path='./output'     
-        foldername=st.text_input("Enter a name for the folder to store the results",value=folder_name,key='foldername')                   
+        #foldername=st.text_input("Enter a name for the folder to store the results",value=folder_name,key='foldername')                   
         st.sidebar.header("Dataset Summary")
         dataset_shape=('The dataset has {} variables and {} observations.').format(df.shape[1],df.shape[0])
         st.sidebar.write(dataset_shape)        
@@ -719,7 +719,7 @@ def main():
             st.write("The expected format is as shown below. ")
             st.image("./MISC/sampledata.PNG",width=500)
             st.markdown("""
-            The tool expects the data to be in a csv format where the column name is the name of the process variable and the rows are the observations.
+            The tool expects the data to be in a csv format where the column name is the name of the process variable and the rows are the observations. Categorical data should be converted into numerical values.
             """)
     
         
@@ -789,8 +789,11 @@ def main():
             st.session_state.button_clicked=True
     if 'button_clicked' in st.session_state:
             datatofit=st.session_state['data']
-            #st.write(datatofit)    
-            IM_uni(datatofit)
+            #st.write(datatofit)
+            try:    
+                IM_uni(datatofit)
+            except:
+                st.warning("Please upload a csv file which adheres to the format mentioned in the documentation.")
     #st.write(st.session_state.data_generated)
     
             
