@@ -32,6 +32,7 @@ import scipy
 import statsmodels.api
 import math
 import pandas as pd 
+import streamlit as st
 
 import re
 
@@ -182,8 +183,8 @@ class modelmatch:
          self.ind1=[]
          self.ind2=[]
         
-         
-         self.chipdf,self.chiC=np.histogram(self.data,100,density=1)
+         #self.chipdf,self.chiC=np.histogram(self.data,100,density=1)
+         self.chipdf,self.chiC=np.histogram(self.data,self.binhist,density=1)
          self.cntchi=self.binning(indbins)
          self.chiCs=self.chiC[:-1]
          self.chipdfs=self.chipdf[:-1]
@@ -222,7 +223,8 @@ class modelmatch:
          
      
     def mychi(self):
-         self.chiC,self.chipdf=np.histogram(self.data,100,density=1)
+         #self.chiC,self.chipdf=np.histogram(self.data,100,density=1)
+         self.chiC,self.chipdf=np.histogram(self.data,self.binhist,density=1)
          #self.chipdf=self.chipdf/sum(self.chipdf)
          self.myind, self.cntchi=self.pickind(6)
          n=len(self.cntchi)
@@ -343,7 +345,7 @@ class modelmatch:
             #plt.plot(self.bin_edges[:-1],self.pdf,c='r')
             #plt.legend(['histogram("fitting pdf)'])
            
-            self.kdecenter,self.kdepdf,self.kdeh=self.kdecall(100)
+            self.kdecenter,self.kdepdf,self.kdeh=self.kdecall(self.binhist)
             SSEvalkde=self.SSE_kde()          
        
                
@@ -353,10 +355,11 @@ class modelmatch:
             dictpval_details={}
             dictpdf_details={}
             dictpdf_details['data']=self.data
-            
-           
+        
+            prog_text="Please wait while I fit"
+            my_bar=st.progress(0)
             for distset in self.distributions:
-                for dist in distset:
+                for (dist,p) in zip(distset,range(len(distset))):
                     if dist=='kde':
                         print("hihi")
                     self.distpdf=self.calc_pdf(dist)
@@ -364,6 +367,9 @@ class modelmatch:
                     pval=self.GOFtest(dist,self.gofoption)
                     dictpdf_details[dist]=self.distpdf
                     dictpval_details[dist]=pval
+                    #st.write(p,len(distset))
+                    my_bar.progress(p+1)
+                my_bar.empty()
            
            
             return dictpdf_details,dictpval_details
@@ -393,13 +399,14 @@ class modelmatch:
            
                 #define bins as {0, 1, ..., max(x), max(x)+1}
                 bins = np.arange(max(self.data)+2)
+                bins=self.binhist
                 
                 for distset in self.distributions:
                     for dist in distset:
                     
                         #using the bins to compute the density of sampled data
                         if dist=='poisson':
-                            self.density_pois , _ = np.histogram(self.data, bins-.5, density=True)
+                            self.density_pois , _ = np.histogram(self.data, bins, density=True)
                             self.ppdf=self.calc_pdf('poisson')
                             self.binning("all")
                             self.GOFtest('poisson',self.gofoption)
@@ -415,9 +422,9 @@ class modelmatch:
                    
                             '''self.data1,self.bpdf1=self.sorting(self.data,self.bpdf)
                             plt.plot(self.data1,self.bpdf1,c='blue')'''
-                            bins = np.arange(max(self.data)+2)
+                            #bins = np.arange(max(self.data)+2)
                             #using the bins to compute the density of sampled data
-                            density_bino , _ = np.histogram(self.data, bins-.5, density=True)
+                            density_bino , _ = np.histogram(self.data, bins, density=True)
                             self.bpdf=self.calc_pdf('binom')
                             self.binning('all')
                             self.GOFtest('binom',self.gofoption)
@@ -431,10 +438,10 @@ class modelmatch:
                    
                             '''self.data1,self.bpdf1=self.sorting(self.data,self.bpdf)
                             plt.plot(self.data1,self.bpdf1,c='blue')'''
-                            bins = np.arange(max(self.data)+2)
+                            #bins = np.arange(max(self.data)+2)
                             
                             #using the bins to compute the density of sampled data
-                            density_geom , _ = np.histogram(self.data, bins-.5, density=True)
+                            density_geom , _ = np.histogram(self.data, bins, density=True)
                             self.gpdf=self.calc_pdf('geom')
                             self.binning('all')
                             self.GOFtest('geom',self.gofoption)
@@ -468,153 +475,7 @@ class modelmatch:
                 print("Data set does not belong to binomial or poisson distribution")
                 return -111
     
-    def bestfit_old(self):
-        #estimating pdf based on 100 bins from histogram function
-        ####self.pdf, self.bin_edges = np.histogram(self.data, bins=self.binhist,density=True )
-        #self.pdf=self.pdf/self.pdf.sum()
-        #ploting the histogram with 100 bins
-        ####plt.hist(self.data,bins=self.binhist,density = 1,alpha=0.4)
-        #plotting the pdf obtained from histogram with 100 bins
-        ####plt.plot(self.bin_edges[:-1],self.pdf,c='r')
-        ####plt.legend(['histogram("fitting pdf)'])
-        cont=['norm','expon','lognorm','dweibull','triang','gamma','uniform',]
-        self.SSE()
-        if self.typeofdata=='continuous':
-            
-            self.pdf, self.bin_edges = np.histogram(self.data, bins=self.binhist,density=True )
-            #self.pdf=self.pdf/self.pdf.sum()
-            #ploting the histogram with 100 bins
-            plt.hist(self.data,bins=self.binhist,density = 1,alpha=0.4)
-            
-            #plotting the pdf obtained from histogram with 100 bins
-            #plt.plot(self.bin_edges[:-1],self.pdf,c='r')
-            #plt.legend(['histogram("fitting pdf)'])
-            
-            self.kdecenter,self.kdepdf,self.kdeh=self.kdecall(100)
-            SSEvalkde=self.SSE_kde()
-            
-            '''if self.gofoption=='ks':
-                valkde=self.Kdeks2()
-                
-            elif self.gofoption=='chi':
-                valkde=self.mychi()[0]'''
-                
-                
-            valkde= self.GOFtest('kde', self.gofoption)
-            plt.plot(self.kdecenter, self.kdepdf,color='red', linestyle="solid" )
-            plt.legend(['histogram derived pdf using KDE)'])
-            
-     
-            
-            self.npdf=self.calc_pdf('norm')
-            self.binning(6)
-            normp=self.GOFtest('norm',self.gofoption)
-            #print(normp)
-            plt.plot(self.data,self.npdf,c='black')
-            plt.legend(['normal'])
-            
-            self.epdf=self.calc_pdf('expon')
-            self.binning(6)
-            exponp=self.GOFtest('expon',self.gofoption)
-            plt.plot(self.data,self.epdf,c='g')
-            plt.legend(['exponential'])
-           
-            self.tpdf=self.calc_pdf('triang')
-            self.binning(6)
-            triangp=self.GOFtest('triang',self.gofoption)
-            plt.plot(self.data,self.tpdf,c='cyan')
-            plt.legend(['triangular'])
-            
-            self.wpdf=self.calc_pdf('weibull_min')
-            self.binning(6)
-            weibp=self.GOFtest('weibull_min',self.gofoption)
-            plt.plot(self.data,self.wpdf,c='yellow')
-            plt.legend(['weibull_min'])
-            
-            self.updf=self.calc_pdf('uniform')
-            self.binning(6)
-            unip=self.GOFtest('uniform',self.gofoption)
-            plt.plot(self.data,self.updf,c='orange')
-            plt.legend(['uniform'])
-            
-            self.lpdf=self.calc_pdf('lognorm')            
-            self.binning(6)
-            lnp=self.GOFtest('lognorm',self.gofoption)
-            plt.plot(self.data,self.lpdf,linestyle='dashed',c='rosybrown')
-            plt.legend(['lognorm'])
-            
-            self.gpdf=self.calc_pdf('gamma')            
-            self.binning(6)
-            gamnp=self.GOFtest('gamma',self.gofoption)
-            plt.plot(self.data,self.gpdf,linestyle='dashed',c='blue')
-            plt.legend(['gamma'])
-            
-            plt.legend(['histogram derived pdf:{}'.format(np.round(valkde,4)),'normal:{}'.format(np.round(normp,4)),'exponential:{}'.format(np.round(exponp,4)),'triangular:{}'.format(np.round(triangp,4)),'weibull:{}'.format(np.round(weibp,4)),'uniform:{}'.format(np.round(unip,4)),'lognorm:{}'.format(np.round(lnp,4)),'gamma:{}'.format(np.round(gamnp,4))])
-            #plt.legend(['histogram derived pdf','normal','exponential','triangular','uniform','binomial','poisson',])
-            plt.xlabel('x-values')
-            plt.ylabel('pdf')
-            plt.title(self.title)
-            plt.show()
-            return {'data':self.data, 'norm':self.npdf,'expon': self.epdf,'triang':self.tpdf,'weibull': self.wpdf,'uniform':self.updf,'lognorm':self.lpdf,'gamma':self.gpdf}
-            
-        if self.typeofdata=='discrete':
-            #print(self.data.dtype,"jjjjjj")
-            if self.data.dtype=='int':
-                self.pdf, self.bin_edges = np.histogram(self.data, bins=self.binhist,density=True )
-                #print(self.bin_edges)
-                self.bin_edges=np.round(self.bin_edges)
-                self.pdf=self.pdf/self.pdf.sum()
-                #print("1",self.pdf)
-                plt.bar(self.bin_edges[:-1],self.pdf,width=0.1)
-                #plotting the pdf obtained from histogram with 100 bins
-                #plt.scatter(self.bin_edges[:-1],self.pdf,c='r',)
-                #print("2",self.pdf)
-               
-                #self.SSE()
-                '''self.data1,self.ppdf1=self.sorting(self.data,self.ppdf)
-                plt.plot(self.data1,self.ppdf1,c='magenta')'''
-            
-                #define bins as {0, 1, ..., max(x), max(x)+1}
-                bins = np.arange(max(self.data)+2)
-                #using the bins to compute the density of sampled data
-                self.density_pois , _ = np.histogram(self.data, bins-.5, density=True)
-                self.ppdf=self.calc_pdf('poisson')
-                self.binning("all")
-                self.GOFtest('poisson',self.gofoption)
-                poissp=self.SSEdata['poisson'][self.SSEdata['Test'].index("SSE")]
-                #plt.plot(self.data1,self.ppdf1_cont,c='magenta')
-                plt.plot(self.data,self.ppdf,c='black')
-              
-            
-            
-                '''self.data1,self.bpdf1=self.sorting(self.data,self.bpdf)
-                plt.plot(self.data1,self.bpdf1,c='blue')'''
-                bins = np.arange(max(self.data)+2)
-                #using the bins to compute the density of sampled data
-                density_bino , _ = np.histogram(self.data, bins-.5, density=True)
-                self.bpdf=self.calc_pdf('binom')
-                self.binning('all')
-                self.GOFtest('binom',self.gofoption)
-                binop=self.SSEdata['binom'][self.SSEdata['Test'].index("SSE")]
-                #plt.plot(self.data1,self.bpdf1_cont,c='blue',alpha=0.5)
-                plt.plot(self.data,self.bpdf,c='green',alpha=0.5)
-             
-                
-              
-                
-                plt.legend(['poisson:{}'.format(np.round(poissp,4)),'binomial:{}'.format(np.round(binop,4)),])
-                
-                #plt.legend(['poisson:{}'.format(np.round(poissp,4)),'binomial:{}'.format(np.round(binop,4)),'randint:{}'.format(np.round(ranop,4)),'histogram fitting pmf'])
-                
-                
-                #plt.legend(['histogram derived pdf','normal','exponential','triangular','uniform','binomial','poisson',])
-                plt.xlabel('x-values')
-                plt.ylabel('pdf')
-                plt.title(self.title)
-                plt.show()
-            else:
-                print("Data set does not belong to binomial or poisson distribution")
-                return -111
+    
     
 
         
@@ -662,10 +523,11 @@ class modelmatch:
     def SSE_kde(self):
         self.kc=[]
         self.kpdf=[]
-        
-        self.histpdf,histedges=np.histogram(self.data,50,density=1)
+        #self.histpdf,histedges=np.histogram(self.data,50,density=1)
+        self.histpdf,histedges=np.histogram(self.data,self.binhist,density=1)
         self.histcentre=(histedges[:-1]+histedges[1:])/2.0
-        self.cent,self.spdf,self.h=self.kdecall(50)
+        #self.cent,self.spdf,self.h=self.kdecall(50)
+        self.cent,self.spdf,self.h=self.kdecall(self.binhist)
     
                 
         #self.spdf=self.calc_pdf_data(idist, self.histcentre)
@@ -705,7 +567,8 @@ class modelmatch:
             for idistset in self.distributions:
                 for idist in idistset:
                     #self.histpdf=self.histpdf/self.histpdf.sum()
-                    self.histpdf,histedges=np.histogram(self.data,50,density=1)
+                    #self.histpdf,histedges=np.histogram(self.data,50,density=1)
+                    self.histpdf,histedges=np.histogram(self.data,self.binhist,density=1)
                     # print(self.histpdf.sum())
                     #self.histpdf1=self.histpdf1/self.histpdf1.sum()
                     #print(self.histpdf.sum())
