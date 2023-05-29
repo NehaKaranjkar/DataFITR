@@ -635,10 +635,15 @@ def IM_uni(df):
                         #st.write(result_df.head(5))
                         
                         #st.table(SSE)
-            distlist=list(up_df['Test']) 
-            params=listparamsofdistributions.getparams(distlist[0],datatyp,df_plot['data'])
-            string_info='The data column "{}" selected to fit has matched with "{}" with parameters {}.'.format(inpvar,distlist[0],params)   
-            st.info(string_info)  
+            distlist=list(up_df['Test'])
+            if distlist[0]!='kde':
+                params=listparamsofdistributions.getparams(distlist[0],datatyp,df_plot['data'])
+                string_info='The data column "{}" selected to fit has matched with "{}" with parameters {}.'.format(inpvar,distlist[0],params)   
+                st.info(string_info)  
+            else:
+                string_info='The data column "{}" selected to fit has matched with "{}" .'.format(inpvar,distlist[0])   
+                st.info(string_info) 
+                
 
             st.header("Random Variate Generation")               
             with st.expander("Click here to get the code for Random Variate Generation"):               
