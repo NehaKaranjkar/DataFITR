@@ -776,7 +776,10 @@ def main():
                 st.download_button('Download generated data as a CSV file', to_csv(df1), 'sample_data.csv', 'text/csv')
             
         else:
+            st.info("This dataset is an open data from Kaggle. A categorical column in the dataset is converted into numerical values")
+            st.markdown("[Click here for details of the dataset](https://www.kaggle.com/datasets/gabrielsantello/parts-manufacturing-industry-dataset)")
             if st.button(("Reload open data" if "data_generated" in st.session_state else "Load open data")):
+                
                 df1=pd.read_csv("./MISC/opendata.csv")
                 st.session_state.data_generated=True
                 st.session_state.data=df1
