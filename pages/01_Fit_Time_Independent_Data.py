@@ -389,10 +389,10 @@ def IM_uni(df):
             datatyp='na'
             if datatype_option=='Real-Valued':
                 datatyp='continuous'
-                distlist_userselect = st.multiselect("Choose distributions to fit", ['continuous_all','continuous_popular'],default='continuous_popular',key='dislist_user')
+                distlist_userselect = st.selectbox("Choose distributions to fit", ['continuous_all','continuous_popular'],default='continuous_popular',key='dislist_user')
             else:
                 datatyp='discrete'
-                distlist_userselect = st.multiselect("Choose distributions to fit", ['discrete_all','discrete_popular'],default='discrete_popular',key='dislist_user')
+                distlist_userselect = st.selectbox("Choose distributions to fit", ['discrete_all','discrete_popular'],default='discrete_popular',key='dislist_user')
         
         
     
