@@ -317,8 +317,9 @@ def IM_MVG(df):
                  
                     
             with col2:
-                fig = plt.scatter(df[selected_x_axis], df[selected_y_axis],color='blue')
-               
+                fig,ax=plt.subplots()
+                ax.scatter(df[selected_x_axis], df[selected_y_axis],color='blue')
+                #ax = plt.axes(projection ="2d")
                 #fig.update_layout(scene = dict(aspectmode='cube'),template='plotly',margin={"l":0,"r":0,"t":0,"b":0},title_font_family="Times New Roman",title_font_color="red" )
                 #fig.update_traces(marker_size=st.session_state.marker_size)
                 
