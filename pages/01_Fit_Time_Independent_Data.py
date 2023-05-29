@@ -200,7 +200,11 @@ def to_csv(df):
     return data_csv
 
         
-
+def checkdatatype(df):
+    for i in df.columns:
+        if (df[i]).dtype  not in[ 'float','int']:
+            return 0
+    return 1
 
 
 
@@ -226,6 +230,10 @@ def IM_uni(df):
    
         
     st.header("Data Exploration")
+    if checkdatatype(df)==0:
+ 
+        st.warning("All categorical columns should be converted to numerical values")
+        return
     
     with st.expander("Click here to view the results of Exploratory Data Analysis"): 
         #folder_name='SampleCSVfile'
@@ -234,12 +242,15 @@ def IM_uni(df):
         st.sidebar.header("Dataset Summary")
         dataset_shape=('The dataset has {} variables and {} observations.').format(df.shape[1],df.shape[0])
         st.sidebar.write(dataset_shape)        
-        dtype_col,desc_col=st.columns(2)        
+        dtype_col,desc_col=st.columns(2)   
+        
         with desc_col:
             #st.caption("Summary of the dataset uploaded")
             st.markdown("""<style>.big-font {font-size:20px !important;}</style>""", unsafe_allow_html=True)
             st.markdown('<p class="big-font">Summary of the dataset uploaded', unsafe_allow_html=True)
-            st.write(df.describe(include="all"))        
+            
+            st.write(df.describe(include="all"))     
+            
         with dtype_col:
             #st.caption("Data type of the columns in the dataset")
             st.markdown('<p class="big-font">Data type of the columns in the dataset', unsafe_allow_html=True)           
@@ -254,9 +265,9 @@ def IM_uni(df):
                 plt.tight_layout()
                 #dflist=np.array(df[i])
                 a=sns.histplot(df[i],bins=100,kde=True)
-                mean=round(df[i].mean(),2)
-                std=round(df[i].std(),2)
-                texttoprint= "mean="+str(mean)+'\n'+"stddev="+str(std)
+                #mean=round(df[i].mean(),2)
+                #std=round(df[i].std(),2)
+                #texttoprint= "mean="+str(mean)+'\n'+"stddev="+str(std)
                 #a.axvline(df[i].mean(),color='k',lw=2)
                 
                 a.set_xlabel(i,fontsize=15)
@@ -393,9 +404,10 @@ def IM_uni(df):
         st.warning("Move the slider to change the binsize")
         datalen=len(df[inpvar])
         defaultbin=min((1+np.ceil(np.log(datalen))),max(100,datalen/10))
+        maxbin=max(200,10*defaultbin)
         #st.write(defaultbin)
         #bins=st.slider("Choose an appropriate number of bins to plot the histogram.",1,200,min(10,max(100,len(df[inpvar])/10)),key='bins')
-        bins=st.slider("Choose an appropriate number of bins to plot the histogram.",1,200,int(defaultbin),key='bins')
+        bins=st.slider("Choose an appropriate number of bins to plot the histogram.",1,int(maxbin),int(defaultbin),key='bins')
         st.sidebar.write("The binsize is ",bins)
         fig,ax=plt.subplots()
         ax.hist(df[inpvar],edgecolor = "black",bins=bins,density = 1)
@@ -789,11 +801,9 @@ def main():
             st.session_state.button_clicked=True
     if 'button_clicked' in st.session_state:
             datatofit=st.session_state['data']
+            IM_uni(datatofit)
             #st.write(datatofit)
-            try:    
-                IM_uni(datatofit)
-            except:
-                st.warning("Please upload a csv file which adheres to the format mentioned in the documentation.")
+            
     #st.write(st.session_state.data_generated)
     
             
