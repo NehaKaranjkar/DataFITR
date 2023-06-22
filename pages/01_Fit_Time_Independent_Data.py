@@ -646,17 +646,16 @@ def IM_uni(df):
                 with selectcol:
                     disttozoom=st.selectbox("choose a distribution to plot", colstoplot)
                 with plotcol:
-                    fig, ax = plt.subplots()
+                    fig1, ax1 = plt.subplots()
+                    #st.write(df_plot[disttozoom],df_plot['data'])
                    
-                    ax.plot(df_plot['data'],df_plot[disttozoom], label=disttozoom,color=colors[j])
+                    ax1.plot(df_plot['data'],df_plot[disttozoom], label=disttozoom,color=colors[0])
                     
-                    ax.legend(fontsize=15)
-                    ax.set_title('Line Plots',size=18)
-                    ax.set_xlabel('x -values',size=16)
-                    ax.set_ylabel('pdf',size=16)
-
-                    # Show the plot in Streamlit
-                    st.pyplot(fig)
+                    ax1.legend(fontsize=15)
+                    ax1.set_title('Line Plots',size=18)
+                    ax1.set_xlabel('x -values',size=16)
+                    ax1.set_ylabel('pdf',size=16)
+                    st.pyplot(fig1)
                         #st.table(SSE)
             distlist=list(up_df['Test'])
             #distlist=list(up_df.index)

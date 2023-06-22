@@ -421,7 +421,7 @@ class modelmatch:
                             self.GOFtest('poisson',self.gofoption)
                             poissp=self.SSEdata['poisson'][self.SSEdata['Test'].index("SSE")]
                             #plt.plot(self.data1,self.ppdf1_cont,c='magenta')
-                            print(self.dist,"here1")
+                            #print(self.dist,"here1")
                             plt.plot(self.data,self.ppdf,c='black')
                             dictpdf_details['poisson']=self.ppdf
                             dictpval_details['poisson']=poissp
@@ -515,7 +515,7 @@ class modelmatch:
             self.param=self.calc_param(self.dist)
             #print(self.dist, self.param)
             if type(list(self.cnt.keys())[0])=="numpy.int64":
-                print("here",self.dist)
+                #print("here",self.dist)
                 exp_freq = [self.N*k.pmf(r, self.param[-2],self.param[-1]) for r in self.cnt.keys()]
             else:
                 
@@ -529,10 +529,10 @@ class modelmatch:
         else:
             print("Chisquared Test:distribution not supported",self.dist)
             return (-111,-111)
-        print(exp_freq,obs_freq)
+        #print(exp_freq,obs_freq)
         exp_freq=exp_freq/np.sum(exp_freq)
         obs_freq=obs_freq/np.sum(obs_freq)
-        print(self.dist,exp_freq,obs_freq)
+        #print(self.dist,exp_freq,obs_freq)
         chi,p=scipy.stats.chisquare(obs_freq,exp_freq,n-1)
         chi,p=scipy.stats.power_divergence(obs_freq,exp_freq,ddof=1,lambda_=1)
         return (np.round(chi,4),np.round(p,4))
@@ -676,7 +676,7 @@ class modelmatch:
         GOF.reset_index(inplace=True)
         GOF.rename({'index': 'Test'}, axis=1, inplace=True)
         self.GOFfinal=GOF
-        print(self.GOFfinal)
+        #print(self.GOFfinal)
             
         #print("-----------------------------------------"*3)
         #print(self.title)
@@ -749,7 +749,7 @@ y.printresult()'''
 
 
 
-'''discrete_popular=['binom','poisson','geom']
+discrete_popular=['binom','poisson','geom']
 df=pd.read_csv("sample_data.csv")
 data=df['jobarrival_Machine']
 
@@ -758,4 +758,4 @@ data=df['timetaken_transport']
 d=np.random.geometric(0.4, size=2000)
 y= modelmatch(data,'discrete','Weibull distribution',8,'ks',['discrete'],[discrete_popular])
 y.bestfit(['discrete'],[discrete_popular])
-y.printresult()'''
+y.printresult()
