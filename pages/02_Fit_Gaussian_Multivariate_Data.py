@@ -34,7 +34,7 @@ from pyxlsb import open_workbook as open_xlsb
 
 #st.title("This part will be added soon")
 
-def my_function(data,distlist,distributions,typ='continuous',dist='my1 distribution',bins=100,gof="ks",):
+def my_function(data,distlist,distributions,typ='continuous',dist='my1 distribution',bins=100,gof="ks",kde_bins=50):
     
     #st.write("Please wait while I fit your data")
     #modelGUI=modular_IM.modelmatch()
@@ -46,26 +46,16 @@ def my_function(data,distlist,distributions,typ='continuous',dist='my1 distribut
         pval=data[0]
         return  restyp,result, plotdata,pval
     #st.write("hdhhdhdhdhdh")
-    modelGUI=modular_IM.modelmatch(data ,typ,dist,bins,gof,distlist,distributions)
+    modelGUI=modular_IM.modelmatch(data ,typ,dist,bins,gof,distlist,distributions,kde_bins)
     #st.write(modelGUI.data)
     plotdata,pval=modelGUI.bestfit(distlist,distributions)
-    GOFresult,SSEresult=modelGUI.printresult()
+    result,SSEresult=modelGUI.printresult()
     #st.write(pd.DataFrame(plotdata))
-    GOF=pd.DataFrame(GOFresult).T
-    SSE=pd.DataFrame(SSEresult).T
+    #GOF=pd.DataFrame(GOFresult).T
+    #SSE=pd.DataFrame(SSEresult).T
     
     restyp='nonconstant'
-    GOF.rename({0: GOF.iloc[0][0], 1: GOF.iloc[0][1]}, axis=1, inplace=True)
-    GOF.drop('Test',axis=0,inplace=True)
-    cols=list(GOF.columns)
-    for i in cols:
-        GOF[i] = GOF[i].apply(lambda X: X[0])
-        
     
-    SSE.rename({0: SSE.iloc[0][0]}, axis=1, inplace=True)
-    SSE.drop('Test',axis=0,inplace=True)
-    result = pd.merge(GOF, SSE, on=GOF.index)
-    result.rename({'key_0': 'Test'}, axis=1, inplace=True)
     #st.write(plotdata)
     
     return restyp,result,plotdata,pval
@@ -350,7 +340,7 @@ def IM_MVG(df):
                 distributions=[['norm']]
                 datatyp='continuous'
                 dataname=inpvar   
-                restyp,finresult,plotdata,pval=my_function(df[inpvar],distlist,distributions,datatyp,dataname,bins,'ks',)
+                restyp,finresult,plotdata,pval=my_function(df[inpvar],distlist,distributions,datatyp,dataname,bins,'ks',2*bins)
                 if restyp=='nonconstant':
                     result_df = finresult.sort_values(by = goodnessoffit)
                     up_df=result_df.copy()

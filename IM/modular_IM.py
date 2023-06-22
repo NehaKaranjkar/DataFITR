@@ -39,7 +39,7 @@ import re
 random.seed(42)
 
 class modelmatch:
-    def __init__(self,data,typeofdata,title,binhist,gofoption,distlist,distributions):
+    def __init__(self,data,typeofdata,title,binhist,gofoption,distlist,distributions,binskde=50):
         self.data=np.sort(data)
         self.datamain=data
         self.typeofdata=typeofdata
@@ -51,7 +51,7 @@ class modelmatch:
         self.SSEdata = {"Test": []}
         self.GOFpval={}
         self.gofoption=gofoption
-        self.kdesize=1000
+        self.binskde=binskde
 
         
         if self.typeofdata=='discrete':
@@ -68,8 +68,10 @@ class modelmatch:
             self.mode=statistics.mode(self.data)
             self.median=np.median(self.data)
             self.c=(self.mode-self.min)/(self.max-self.min)
-            self.binom_n=max(self.data)
+            self.binom_n=len(self.data)
+            self.bmean=np.unique(self.data,return_counts=True)[0][np.argmax(np.unique(self.data,return_counts=True)[1])]
             self.binom_param=self.mean/self.binom_n
+            
             self.geomparam=len(self.data)/sum(self.data)
         
         
@@ -82,7 +84,7 @@ class modelmatch:
         elif distribution=='randint':
             return( self.min,self.max)
         elif distribution=='geom':
-            return(len(self.data)/sum(self.data),min(self.data))
+            return(len(self.data)/sum(self.data),0)
         else:
             #print(distribution,type(distribution))
             #print(distribution)
@@ -224,7 +226,8 @@ class modelmatch:
      
     def mychi(self):
          #self.chiC,self.chipdf=np.histogram(self.data,100,density=1)
-         self.chiC,self.chipdf=np.histogram(self.data,self.binhist,density=1)
+         #self.chiC,self.chipdf=np.histogram(self.data,self.binhist,density=1)
+         self.chiC,self.chipdf=np.histogram(self.data,self.binskde,density=1)
          #self.chipdf=self.chipdf/sum(self.chipdf)
          self.myind, self.cntchi=self.pickind(6)
          n=len(self.cntchi)
@@ -346,7 +349,7 @@ class modelmatch:
             #plt.legend(['histogram("fitting pdf)'])
            
             self.kdecenter,self.kdepdf,self.kdeh=self.kdecall(self.binhist)
-            SSEvalkde=self.SSE_kde()          
+            SSEvalkde=self.SSE_kde(self.binskde)          
        
                
             valkde= self.GOFtest('kde', self.gofoption)
@@ -379,14 +382,19 @@ class modelmatch:
             dictpval_details={}
             dictpdf_details={}
             dictpdf_details['data']=self.data
-            if self.data.dtype=='int':
-                
-                self.pdf, self.bin_edges = np.histogram(self.data, bins=self.binhist,density=True )
-                #print(self.bin_edges)
+            if self.data.dtype=='int'or 'float':
+                if self.data.dtype=='int':
+                    self.pdf, self.bin_edges = np.histogram(self.data, bins=max(self.data),density=True )
+                if self.data.dtype=='float':
+                    self.pdf, self.bin_edges = np.histogram(self.data, bins=self.binhist,density=True )
+                #self.pdf, self.bin_edges = np.histogram(self.data, bins=self.binhist,density=True )
+                #print(self.bin_edges,self.pdf)
                 self.bin_edges=np.round(self.bin_edges)
                 self.pdf=self.pdf/self.pdf.sum()
+                #print(self.bin_edges,self.pdf)
                 #print("1",self.pdf)
-                plt.bar(self.bin_edges[:-1],self.pdf,width=0.1)
+                #plt.bar(self.bin_edges[:-1],self.pdf,width=0.1)
+                plt.hist(self.data,bins=self.binhist,density = True,alpha=0.4)
                 dictpval_details['binedges']=self.bin_edges[:-1]
                 dictpval_details['binpdf']=self.pdf
                 #plotting the pdf obtained from histogram with 100 bins
@@ -408,10 +416,12 @@ class modelmatch:
                         if dist=='poisson':
                             self.density_pois , _ = np.histogram(self.data, bins, density=True)
                             self.ppdf=self.calc_pdf('poisson')
-                            self.binning("all")
+                            #self.binning("all")
+                            self.binning(self.binhist)
                             self.GOFtest('poisson',self.gofoption)
                             poissp=self.SSEdata['poisson'][self.SSEdata['Test'].index("SSE")]
                             #plt.plot(self.data1,self.ppdf1_cont,c='magenta')
+                            print(self.dist,"here1")
                             plt.plot(self.data,self.ppdf,c='black')
                             dictpdf_details['poisson']=self.ppdf
                             dictpval_details['poisson']=poissp
@@ -426,7 +436,8 @@ class modelmatch:
                             #using the bins to compute the density of sampled data
                             density_bino , _ = np.histogram(self.data, bins, density=True)
                             self.bpdf=self.calc_pdf('binom')
-                            self.binning('all')
+                            #self.binning('all')
+                            self.binning(self.binhist)
                             self.GOFtest('binom',self.gofoption)
                             binop=self.SSEdata['binom'][self.SSEdata['Test'].index("SSE")]
                             #plt.plot(self.data1,self.bpdf1_cont,c='blue',alpha=0.5)
@@ -443,7 +454,8 @@ class modelmatch:
                             #using the bins to compute the density of sampled data
                             density_geom , _ = np.histogram(self.data, bins, density=True)
                             self.gpdf=self.calc_pdf('geom')
-                            self.binning('all')
+                            #self.binning('all')
+                            self.binning(self.binhist)
                             self.GOFtest('geom',self.gofoption)
                             geomp=self.SSEdata['geom'][self.SSEdata['Test'].index("SSE")]
                             #plt.plot(self.data1,self.bpdf1_cont,c='blue',alpha=0.5)
@@ -501,16 +513,28 @@ class modelmatch:
             k=getattr(stats,self.dist) 
             n=len(obs_freq)-disc_dict[self.dist] 
             self.param=self.calc_param(self.dist)
-            exp_freq = [self.N*k.pmf(r, self.param[-2],self.param[-1]) for r in self.cnt.keys()]
+            #print(self.dist, self.param)
+            if type(list(self.cnt.keys())[0])=="numpy.int64":
+                print("here",self.dist)
+                exp_freq = [self.N*k.pmf(r, self.param[-2],self.param[-1]) for r in self.cnt.keys()]
+            else:
+                
+                binkeys=[ int(np.mean(i)) for i in list(self.cnt.keys())]
+                exp_freq = [self.N*k.pmf(r, self.param[-2],self.param[-1]) for r in binkeys]
+                #exp_freq = [self.N*k.pmf(r, self.param[-2],self.param[-1]) for r in self.cnt.keys()]
+                
+                
         
 
         else:
             print("Chisquared Test:distribution not supported",self.dist)
             return (-111,-111)
-      
+        print(exp_freq,obs_freq)
         exp_freq=exp_freq/np.sum(exp_freq)
         obs_freq=obs_freq/np.sum(obs_freq)
+        print(self.dist,exp_freq,obs_freq)
         chi,p=scipy.stats.chisquare(obs_freq,exp_freq,n-1)
+        chi,p=scipy.stats.power_divergence(obs_freq,exp_freq,ddof=1,lambda_=1)
         return (np.round(chi,4),np.round(p,4))
         
     def updateSSEdata(self,dis,score):
@@ -520,14 +544,17 @@ class modelmatch:
         else:
             self.SSEdata[dis]=[score]
             
-    def SSE_kde(self):
+    def SSE_kde(self,binskde):
+        self.binskde=binskde
         self.kc=[]
         self.kpdf=[]
         #self.histpdf,histedges=np.histogram(self.data,50,density=1)
-        self.histpdf,histedges=np.histogram(self.data,self.binhist,density=1)
+        #self.histpdf,histedges=np.histogram(self.data,self.binhist,density=1)
+        self.histpdf,histedges=np.histogram(self.data,self.binskde,density=1)
         self.histcentre=(histedges[:-1]+histedges[1:])/2.0
         #self.cent,self.spdf,self.h=self.kdecall(50)
-        self.cent,self.spdf,self.h=self.kdecall(self.binhist)
+        #self.cent,self.spdf,self.h=self.kdecall(self.binhist)
+        self.cent,self.spdf,self.h=self.kdecall(self.binskde)
     
                 
         #self.spdf=self.calc_pdf_data(idist, self.histcentre)
@@ -544,7 +571,7 @@ class modelmatch:
         
         
     def Kdeks2(self):
-        
+        #print(self.N,"here")
         histpdf,histedges=np.histogram(self.data,self.N,density=1)
         histcentre1=(histedges[:-1]+histedges[1:])/2.0
         kkde,pkde=scipy.stats.ks_2samp(histcentre1, self.data)
@@ -582,7 +609,8 @@ class modelmatch:
         
         if 'discrete' in self.distlist:
             
-            self.histpdf,self.histedges=np.histogram(self.data,len(self.binning('all')),density=True)
+            #self.histpdf,self.histedges=np.histogram(self.data,len(self.binning('all')),density=True)
+            self.histpdf,self.histedges=np.histogram(self.data,self.binhist,density=True)
             #print(self.histpdf.sum())
             self.histpdf=self.histpdf/self.histpdf.sum()
             #print(self.histpdf.sum())
@@ -629,19 +657,35 @@ class modelmatch:
     
         return (np.round(ks,4),np.round(p,4))
     
-    
-    
+
     
 
     def printresult(self):
-        print("-----------------------------------------"*3)
-        print(self.title)
-        print("-----------------------------------------"*3)
-        print (tabulate((self.GOFdata),headers=self.GOFdata.keys()))
-        print("----------------------------------"*3)
-        print (tabulate((self.SSEdata),headers=self.SSEdata.keys()))
-        print("----------------------------------"*3)
-        return self.GOFdata,self.SSEdata
+        
+        for i in self.GOFdata:
+            self.GOFdata[i].append(self.SSEdata[i][0])
+        GOF=pd.DataFrame(self.GOFdata).T
+
+        GOF.rename({0: GOF.iloc[0][0], 1: GOF.iloc[0][1],2: GOF.iloc[0][2]}, axis=1, inplace=True)
+
+        GOF.drop('Test',axis=0,inplace=True)
+        cols=list(GOF.columns)
+        #print(cols)
+        for i in cols[:2]:
+            GOF[i] = GOF[i].apply(lambda X: X[0])
+        GOF.reset_index(inplace=True)
+        GOF.rename({'index': 'Test'}, axis=1, inplace=True)
+        self.GOFfinal=GOF
+        print(self.GOFfinal)
+            
+        #print("-----------------------------------------"*3)
+        #print(self.title)
+        #print("-----------------------------------------"*3)
+        #print (tabulate((self.GOFdata),headers=self.GOFdata.keys()))
+        #print("----------------------------------"*3)
+        #print (tabulate((self.SSEdata),headers=self.SSEdata.keys()))
+        #print("----------------------------------"*3)
+        return GOF,self.SSEdata
         
     
     def smooth(self,X, window):
@@ -688,4 +732,30 @@ def getcontinuousdist():
         continuous_all.remove(i)
     return continuous_all
     
+'''continuous_popular=['expon','norm','lognorm','triang','uniform','weibull_min','gamma']
+discrete_popular=['binom','poisson','geom']
+#self,data,typeofdata,title,binhist,gofoption,distlist,distributions)
 
+#reciprocal,trapezoid,vonmises
+#GOFdf=pd.DataFrame.from_dict(GOFdata)
+#GOFdf = GOFdf.set_index('Test')
+
+df=pd.read_csv("sample_data.csv")
+data=df['temp']
+y= modelmatch(data,'continuous','Weibull distribution',49,'ks',['continuous'],[continuous_popular])
+y.bestfit(['continuous'],[continuous_popular])
+y.printresult()'''
+
+
+
+
+'''discrete_popular=['binom','poisson','geom']
+df=pd.read_csv("sample_data.csv")
+data=df['jobarrival_Machine']
+
+df=pd.read_csv("sample_data4.csv")
+data=df['timetaken_transport']
+d=np.random.geometric(0.4, size=2000)
+y= modelmatch(data,'discrete','Weibull distribution',8,'ks',['discrete'],[discrete_popular])
+y.bestfit(['discrete'],[discrete_popular])
+y.printresult()'''

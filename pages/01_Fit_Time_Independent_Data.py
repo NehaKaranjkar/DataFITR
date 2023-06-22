@@ -40,8 +40,8 @@ from scipy.stats import pearsonr #to calculate correlation coefficient
 
 
 @st.cache(suppress_st_warning=(True))
-def my_function(data,distlist,distributions,typ='continuous',dist='my1 distribution',bins=100,gof="ks",):
-    st.write("Please wait while I fit your data")
+def my_function(data,distlist,distributions,typ='continuous',dist='my1 distribution',bins=100,gof="ks",kde_bin=50):
+    #st.write("Please wait while I fit your data")
     #modelGUI=modular_IM.modelmatch()
     if len(np.unique(np.array(data)))==1:
         #st.write("chakkakakakkaka")
@@ -51,28 +51,21 @@ def my_function(data,distlist,distributions,typ='continuous',dist='my1 distribut
         pval=data[0]
         return  restyp,result, plotdata,pval
     #st.write("hdhhdhdhdhdh")
-    modelGUI=modular_IM.modelmatch(data ,typ,dist,bins,gof,distlist,distributions)
+    modelGUI=modular_IM.modelmatch(data ,typ,dist,bins,gof,distlist,distributions,kde_bin)
     #st.write(modelGUI.data)
     plotdata,pval=modelGUI.bestfit(distlist,distributions)
-    GOFresult,SSEresult=modelGUI.printresult()
+    result,SSEresult=modelGUI.printresult()
+    #result.rename({'key_0': 'Test'}, axis=1, inplace=True)
+    
     #st.write(pd.DataFrame(plotdata))
-    GOF=pd.DataFrame(GOFresult).T
-    SSE=pd.DataFrame(SSEresult).T
-    
     restyp='nonconstant'
-    GOF.rename({0: GOF.iloc[0][0], 1: GOF.iloc[0][1]}, axis=1, inplace=True)
-    GOF.drop('Test',axis=0,inplace=True)
-    cols=list(GOF.columns)
-    for i in cols:
-        GOF[i] = GOF[i].apply(lambda X: X[0])
-        
     
-    SSE.rename({0: SSE.iloc[0][0]}, axis=1, inplace=True)
-    SSE.drop('Test',axis=0,inplace=True)
-    result = pd.merge(GOF, SSE, on=GOF.index)
-    result.rename({'key_0': 'Test'}, axis=1, inplace=True)
+    
+    
     #st.write(plotdata)
-    
+    #st.write("checkode")
+    #st.write(list(result.index))
+    #st.write(result)
     return restyp,result,plotdata,pval
 
 def dfinfo(df):
@@ -109,21 +102,7 @@ def dfinfo(df):
     
     return info_df
     
-@st.cache    
-def gettypeofdata(dropdown):
-    numitems=df.nunique()
-    typ="na"
-    bin_size=100
-    dropdownlist=[]
-    if numitems[dropdown]>(len(df)/4):
-        
-        st.write(dropdown,"is continuous")
-        typ= "continuous"
-        
-    else:
-        st.write(dropdown,"is discrete")
-        typ= "discrete"
-    return typ
+
 @st.cache(suppress_st_warning=(True))
 def getbinsize():
     bin_size=st.text_input("Enter an approriate bin size for the data to plot histogram")
@@ -134,7 +113,7 @@ def getbinsize():
         
 @st.cache(suppress_st_warning=(True))
 def getcontinuousdist():
-    continuous_all=[]
+    Continuous_All=[]
     all_dist = [getattr(stats, d) for d in dir(stats) if isinstance(getattr(stats, d), stats.rv_continuous)]
     filtered = [x for x in all_dist if ((x.a <= 0) & (x.b == math.inf))]
     filtered=all_dist
@@ -145,12 +124,12 @@ def getcontinuousdist():
         #print(s)
         span=re.search(pat, s).span()
         dist=s[span[0]+2:span[1]-2]
-        continuous_all.append(dist)
+        Continuous_All.append(dist)
         
     for i in ['levy_stable','studentized_range','kstwo','skew_norm','vonmises','trapezoid','reciprocal']:
-        if i in continuous_all: 
-            continuous_all.remove(i)
-    return continuous_all
+        if i in Continuous_All: 
+            Continuous_All.remove(i)
+    return Continuous_All
 @st.cache
 def getdiscretedist():
     discrete=['binom','poisson','geom']
@@ -216,9 +195,12 @@ def convert_df(df):
    return df.to_csv(index=False).encode('utf-8')
 
 def finddatatype_autofill(data):
-    
+    #g=[True if i**2== (int(i))**2 else False  for i in data]
+    g=[True if (float(i)-abs(i))==0 else False  for i in data]
     if data.dtype=='int64':
         return 'Integer-Valued'
+    elif False in g:
+        return 'Real-Valued'
     else:
         return 'Real-Valued'
     
@@ -253,7 +235,8 @@ def IM_uni(df):
             
         with dtype_col:
             #st.caption("Data type of the columns in the dataset")
-            st.markdown('<p class="big-font">Data type of the columns in the dataset', unsafe_allow_html=True)           
+            st.markdown("""   """)
+            st.markdown('<p class="big-font">Data ype of the columns in the dataset', unsafe_allow_html=True)           
             st.dataframe(dfinfo(df))
         if len(list(df.columns))>1:
             fig= plt.figure(figsize=(15, 15))
@@ -365,7 +348,8 @@ def IM_uni(df):
     with datadetailscol:
         #check#dataname = st.text_input("Enter a name for the dataset",value="sample.csv",key='dataname')  
         st.subheader("Fitting data columnwise")
-        inpvar = st.selectbox("Choose the data column to fit/model", df.columns)
+        st.warning("Choose a data column from the CSV file to fit/model")
+        inpvar = st.selectbox("data column", df.columns)
         
         
         st.sidebar.write("Attribute chosen by the user to perform input modeling is",inpvar)
@@ -375,13 +359,13 @@ def IM_uni(df):
         #st.write(default_ind)
         
         if datatype_list[default_ind]=='Real-Valued':
-            datatype_option = st.selectbox('Datatype of the column:', ['Real-Valued'],index=default_ind)
+            datatype_option = st.selectbox('Datatype of the column:', ['Real-Valued','Integer-Valued'],index=default_ind)
         else:
             datatype_option = st.selectbox('Datatype of the column:', datatype_list,index=default_ind)
             st.warning("The datatype of the column is inferred from the data. Click on the dropdown if you wish to change it.")
-        continuous_all=getcontinuousdist()[70:80]
-        continuous_popular=['expon','norm','lognorm','triang','uniform','weibull_min','gamma']
-        discrete_popular=['binom','poisson','geom']
+        Continuous_All=getcontinuousdist()[70:80]
+        Continuous_Popular=['expon','norm','lognorm','triang','uniform','weibull_min','gamma']
+        Discrete_Popular=['binom','poisson','geom']
         if inpvar:
 
             
@@ -389,10 +373,10 @@ def IM_uni(df):
             datatyp='na'
             if datatype_option=='Real-Valued':
                 datatyp='continuous'
-                distlist_userselect = st.selectbox("Choose distributions to fit", ['continuous_popular','continuous_all',],key='dislist_user')
+                distlist_userselect = st.selectbox("Choose distributions to fit", ['Continuous_Popular','Continuous_All',],key='dislist_user')
             else:
                 datatyp='discrete'
-                distlist_userselect = st.selectbox("Choose distributions to fit", ['discrete_popular','discrete_all'],key='dislist_user')
+                distlist_userselect = st.selectbox("Choose distributions to fit", ['Discrete_Popular',],key='dislist_user')
         
         
     
@@ -405,8 +389,7 @@ def IM_uni(df):
         datalen=len(df[inpvar])
         defaultbin=min((1+np.ceil(np.log(datalen))),max(100,datalen/10))
         maxbin=max(200,10*defaultbin)
-        #st.write(defaultbin)
-        #bins=st.slider("Choose an appropriate number of bins to plot the histogram.",1,200,min(10,max(100,len(df[inpvar])/10)),key='bins')
+        
         bins=st.slider("Choose an appropriate number of bins to plot the histogram.",1,int(maxbin),int(defaultbin),key='bins')
         st.sidebar.write("The binsize is ",bins)
         fig,ax=plt.subplots()
@@ -415,31 +398,37 @@ def IM_uni(df):
         plt.ylabel('pdf')
         plt.title('Histogram of data stream selected')
         st.pyplot(fig)
-        distlist=[]
-        distributions=[]
-        if (('continuous_all' in distlist_userselect) or ('continuous_popular'  in distlist_userselect)):
-            distlist.append('continuous')
-            st.session_state['distlist']='continuous'
-            if 'continuous_all' in distlist_userselect:
-                continuous_alldist=getcontinuousdist()
-                distributions.append(continuous_alldist)
-            else:
-                distributions.append(continuous_popular)
-        if (('discrete_all' in distlist_userselect) or ('discrete_popular'  in distlist_userselect)):
-            distlist.append('discrete')
-            st.session_state['distlist']='discrete'
-            if 'discrete_all' in distlist_userselect:
-                discrete_alldist=getdiscretedist()
-                distributions.append(discrete_alldist)
-            else:
-                distributions.append(discrete_popular)
+        
+        
+    
+    
+    
+    distlist=[]
+    distributions=[]
+    if (('Continuous_All' in distlist_userselect) or ('Continuous_Popular'  in distlist_userselect)):
+        distlist.append('continuous')
+        st.session_state['distlist']='continuous'
+        if 'Continuous_All' in distlist_userselect:
+            Continuous_Alldist=getcontinuousdist()
+            distributions.append(Continuous_Alldist)
+        else:
+            distributions.append(Continuous_Popular)
+    if (('Discrete_All' in distlist_userselect) or ('Discrete_Popular'  in distlist_userselect)):
+        distlist.append('discrete')
+        st.session_state['distlist']='discrete'
+        if 'Discrete_All' in distlist_userselect:
+            Discrete_Alldist=getdiscretedist()
+            distributions.append(Discrete_Alldist)
+        else:
+            distributions.append(Discrete_Popular)
         
     if st.button("Start fitting the data"):
         st.session_state.fit_button=True
     
     if 'fit_button' in st.session_state:
-        #st.write(distlist,distributions,datatyp)
-        restyp,finresult,plotdata,pval=my_function(df[inpvar],distlist,distributions,datatyp,inpvar,bins,'ks',)
+        #st.write(df[inpvar],distlist,distributions,datatyp,inpvar,bins,'ks',50)
+        #st.write(my_function(df[inpvar],distlist,distributions,datatyp,inpvar,bins,'ks',50))
+        restyp,finresult,plotdata,pval=my_function(df[inpvar],distlist,distributions,datatyp,inpvar,bins,'ks')
         if restyp=='constant':
             
             constdict={"column":inpvar,"value":[pval],'type':['constant']}
@@ -451,7 +440,7 @@ def IM_uni(df):
             st.info("The data to fit is a contant value and the value is  "+str(pval))
             
         else:
-        
+            #st.write(finresult)
             cols=list(finresult.columns)[1:]
             goodnessoffit=st.selectbox("Select a goodness of fit measure",cols,key='goodnessoffit')
             
@@ -468,14 +457,17 @@ def IM_uni(df):
                 contcol,kdecol=st.columns(2)
                 with contcol:
                     st.markdown("""<style>.big-font {font-size:18px !important;}</style>""", unsafe_allow_html=True)
-                    st.markdown('<p class="big-font">The histogram of the data and the line plots of various matched distribution.', unsafe_allow_html=True)
-    
+                    st.markdown('<p class="medium-font">The histogram of the data and the line plots of various matched distribution.', unsafe_allow_html=True)
+                    st.markdown("""   """)
+                    st.markdown("""   """)
+                    st.markdown("""   """)
+                    st.markdown("""   """)
                     if goodnessoffit:
                         #st.write(plotdata)
                         
                         
                         result_df = finresult.sort_values(by = goodnessoffit)
-                        
+                        #colstoplot=list(result_df.index[:5])
                         colstoplot=list(result_df.head(5)['Test'])
                         if 'kde' in colstoplot:
                             colstoplot.remove("kde")
@@ -486,8 +478,9 @@ def IM_uni(df):
                         
                         df_plot = pd.DataFrame(plotdata)
                         #st.write(bins)
-                        ax.hist(df_plot['data'], bins=bins,label='Histogram', density=True, color='b', alpha=0.4)
-    
+                        #ax.hist(df[inpvar],edgecolor = "black",bins=bins,density = 1)
+                        ax.hist(df_plot['data'], bins,label='Histogram', density=True, color='b', alpha=0.4)
+                        
                         # Plot the line plots
                         j=0
                         for i in colstoplot:
@@ -513,8 +506,13 @@ def IM_uni(df):
                     if goodnessoffit:
                         #objplt.histogram(df_plot.index,bins=bins,density = 1,alpha=0.4)
                         #st.write(objplt)
-                        kdeh=st.slider("Choose an appropriate smoothing parameter, h for KDE plot",5,200,5,key="kdeh")
+                        #st.markdown("""<style>.big-font {font-size:18px !important;}</style>""", unsafe_allow_html=True)
+                        #st.markdown('<p class="big-font">The histogram of the data and Kernel Density Estimation plot', unsafe_allow_html=True)
+                        #st.markdown('<p class="big-font">The histogram of the data and Kernel Density Estimation plot', unsafe_allow_html=True)
+                        st.markdown("""   """)
+                        kdeh=st.slider("Choose an appropriate smoothing parameter, h for KDE plot",5,200,2*bins,key="kdeh")
                         kdecentre,kdepdf,h=kde_silverman_both.kde_func(df[inpvar], inpvar, kdeh)
+                        restyp,finresult,plotdata,pval=my_function(df[inpvar],distlist,distributions,datatyp,inpvar,bins,'ks',kdeh)
                         #dfkde=pd.DataFrame({'kdecentre':kdecentre,"kdepdf":kdepdf})
                         #dfkde=dfkde.set_index('kdecentre')
                         fig,ax=plt.subplots()
@@ -566,15 +564,16 @@ def IM_uni(df):
                     #st.table(SSE)
             else:
                 
-                contcol,GOFcol=st.columns(2)
-                with contcol:
+                disccol,GOFcol=st.columns(2)
+                with disccol:
+                    
                     if goodnessoffit:
                         #st.write(goodnessoffit)
                         #st.write(plotdata)
                         
                         
                         result_df = finresult.sort_values(by = goodnessoffit)
-                        
+                        #colstoplot=list(result_df.index[:5])
                         colstoplot=list(result_df.head(5)['Test'])
                         if 'kde' in colstoplot:
                             colstoplot.remove("kde")
@@ -583,14 +582,22 @@ def IM_uni(df):
     
                         # Plot the histogram
                         
-                        #discrete    
-                        binedges=pval['binedges']
-                        binpdf=pval['binpdf']
-                        ax.bar(binedges,binpdf,width=1)
+                        
+                        bindetails=np.histogram(df[inpvar],bins=bins)
+                        bincount=bindetails[0]
+                        binpdf=bincount/bincount.sum()
+                        binedges=bindetails[1]
+                        binedgelast=binedges[-1]
+                        np.append(binedges,binedgelast)
+                        #binedges=np.round(bindetails[1])
+                        #st.write(bindetails,binpdf,binedges)
+                        ax.hist(df[inpvar],bins=bins,density = True,color='b',alpha=0.4)
+                        #ax.bar(binedges,binpdf,width=1)
                         #ax.hist(df[inpvar],edgecolor = "black",bins=bins,density = 1)
                         
                         
                         df_plot = pd.DataFrame(plotdata)
+                        
                    
                         # Plot the line plots
                         j=0
@@ -609,7 +616,7 @@ def IM_uni(df):
                         imagename=inpvar+'image'
                         st.session_state[imagename]=fig
                         
-    
+                        
                         
     
                         #df_plot = pd.DataFrame(plotdata)
@@ -632,10 +639,27 @@ def IM_uni(df):
                         st.write(dftoprint.reset_index(drop=True))
                         tabname=inpvar+'table'
                         st.session_state[tabname]=dftoprint
+                
                         #st.write(result_df.head(5))
-                        
+            with st.expander("Zoom and show the line plots"):
+                selectcol,plotcol=st.columns(2)
+                with selectcol:
+                    disttozoom=st.selectbox("choose a distribution to plot", colstoplot)
+                with plotcol:
+                    fig, ax = plt.subplots()
+                   
+                    ax.plot(df_plot['data'],df_plot[disttozoom], label=disttozoom,color=colors[j])
+                    
+                    ax.legend(fontsize=15)
+                    ax.set_title('Line Plots',size=18)
+                    ax.set_xlabel('x -values',size=16)
+                    ax.set_ylabel('pdf',size=16)
+
+                    # Show the plot in Streamlit
+                    st.pyplot(fig)
                         #st.table(SSE)
             distlist=list(up_df['Test'])
+            #distlist=list(up_df.index)
             if distlist[0]!='kde':
                 params=listparamsofdistributions.getparams(distlist[0],datatyp,df_plot['data'])
                 string_info='The data column "{}" selected to fit has matched with "{}" with parameters {}.'.format(inpvar,distlist[0],params)   
@@ -775,7 +799,7 @@ def main():
                 df1=datagenforDataFITR.univariate_sample(numdatagen)
                 st.session_state.data_generated=True
                 st.session_state.data=df1
-        
+                #st.download_button('Download generated data as a CSV file', to_csv(df1), 'sample_data.csv', 'text/csv')
                 with st.expander("View raw data"):
                     st.write(df1)
                 st.download_button('Download generated data as a CSV file', to_csv(df1), 'sample_data.csv', 'text/csv')
