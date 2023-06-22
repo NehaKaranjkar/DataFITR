@@ -749,7 +749,7 @@ y.printresult()'''
 
 
 
-discrete_popular=['binom','poisson','geom']
+'''discrete_popular=['binom','poisson','geom']
 df=pd.read_csv("sample_data.csv")
 data=df['jobarrival_Machine']
 
@@ -758,4 +758,4 @@ data=df['timetaken_transport']
 d=np.random.geometric(0.4, size=2000)
 y= modelmatch(data,'discrete','Weibull distribution',8,'ks',['discrete'],[discrete_popular])
 y.bestfit(['discrete'],[discrete_popular])
-y.printresult()
+y.printresult()'''
