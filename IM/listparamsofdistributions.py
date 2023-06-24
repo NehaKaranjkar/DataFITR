@@ -30,7 +30,7 @@ def getcontinuousdist():
         dist=s[span[0]+2:span[1]-2]
         continuous_all.append(dist)
         
-    for i in ['levy_stable','studentized_range','kstwo','skew_norm','vonmises','trapezoid','reciprocal']:
+    for i in ['levy_stable','studentized_range','kstwo','skew_norm','vonmises','trapezoid','reciprocal','geninvgauss','able']:
         if i in continuous_all:
             continuous_all.remove(i)
     return continuous_all

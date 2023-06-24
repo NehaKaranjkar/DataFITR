@@ -33,6 +33,7 @@ import statsmodels.api
 import math
 import pandas as pd 
 import streamlit as st
+import listparamsofdistributions
 
 import re
 
@@ -87,7 +88,7 @@ class modelmatch:
             return(len(self.data)/sum(self.data),0)
         else:
             #print(distribution,type(distribution))
-            #print(distribution)
+            print(distribution)
             k=getattr(stats,distribution)
             return k.fit(self.data)
         
@@ -732,8 +733,10 @@ def getcontinuousdist():
         continuous_all.remove(i)
     return continuous_all
     
-'''continuous_popular=['expon','norm','lognorm','triang','uniform','weibull_min','gamma']
+''''continuous_popular=['expon','norm','lognorm','triang','uniform','weibull_min','gamma']
 discrete_popular=['binom','poisson','geom']
+
+continuous_all=listparamsofdistributions.getcontinuousdist()
 #self,data,typeofdata,title,binhist,gofoption,distlist,distributions)
 
 #reciprocal,trapezoid,vonmises
@@ -742,11 +745,10 @@ discrete_popular=['binom','poisson','geom']
 
 df=pd.read_csv("sample_data.csv")
 data=df['temp']
-y= modelmatch(data,'continuous','Weibull distribution',49,'ks',['continuous'],[continuous_popular])
-y.bestfit(['continuous'],[continuous_popular])
-y.printresult()'''
-
-
+y= modelmatch(data,'continuous','Weibull distribution',49,'ks',['continuous'],[continuous_all])
+y.bestfit(['continuous'],[continuous_all])
+y.printresult()
+'''
 
 
 '''discrete_popular=['binom','poisson','geom']

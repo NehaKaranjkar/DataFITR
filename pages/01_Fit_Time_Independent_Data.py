@@ -126,7 +126,7 @@ def getcontinuousdist():
         dist=s[span[0]+2:span[1]-2]
         Continuous_All.append(dist)
         
-    for i in ['levy_stable','studentized_range','kstwo','skew_norm','vonmises','trapezoid','reciprocal']:
+    for i in ['levy_stable','studentized_range','kstwo','skew_norm','vonmises','trapezoid','reciprocal','geninvgauss','able']:
         if i in Continuous_All: 
             Continuous_All.remove(i)
     return Continuous_All
@@ -363,7 +363,7 @@ def IM_uni(df):
         else:
             datatype_option = st.selectbox('Datatype of the column:', datatype_list,index=default_ind)
             st.warning("The datatype of the column is inferred from the data. Click on the dropdown if you wish to change it.")
-        Continuous_All=getcontinuousdist()[70:80]
+        Continuous_All=listparamsofdistributions.getcontinuousdist()
         Continuous_Popular=['expon','norm','lognorm','triang','uniform','weibull_min','gamma']
         Discrete_Popular=['binom','poisson','geom']
         if inpvar:
@@ -409,7 +409,7 @@ def IM_uni(df):
         distlist.append('continuous')
         st.session_state['distlist']='continuous'
         if 'Continuous_All' in distlist_userselect:
-            Continuous_Alldist=getcontinuousdist()
+            Continuous_Alldist=listparamsofdistributions.getcontinuousdist()
             distributions.append(Continuous_Alldist)
         else:
             distributions.append(Continuous_Popular)
@@ -557,7 +557,8 @@ def IM_uni(df):
                     df2=df_gof_large.style.set_properties(**{'text-align': 'left'}).set_table_styles(styles)
                     st.table(df2)
                     tabname=inpvar+'table'
-                    st.session_state[tabname]=df2
+                    #st.session_state[tabname]=df2
+                    st.session_state[tabname]=finresult
                     #st.write(list(up_df['Test']))
                     #st.write(result_df.head(5))
                     
@@ -638,16 +639,20 @@ def IM_uni(df):
                         dftoprint=result_df.head(10)
                         st.write(dftoprint.reset_index(drop=True))
                         tabname=inpvar+'table'
-                        st.session_state[tabname]=dftoprint
+                        #st.session_state[tabname]=dftoprint
+                        st.session_state[tabname]=finresult
                 
                         #st.write(result_df.head(5))
             with st.expander("Zoom and show the line plots"):
                 selectcol,plotcol=st.columns(2)
+                colstoplot=list(result_df['Test'])
+                if "kde" in colstoplot:
+                    colstoplot.remove("kde")
                 with selectcol:
                     disttozoom=st.selectbox("choose a distribution to plot", colstoplot)
                 with plotcol:
                     fig1, ax1 = plt.subplots()
-                    #st.write(df_plot[disttozoom],df_plot['data'])
+                    #st.write(df_plot.columns,df_plot['data'])
                    
                     ax1.plot(df_plot['data'],df_plot[disttozoom], label=disttozoom,color=colors[0])
                     
