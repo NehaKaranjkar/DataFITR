@@ -103,11 +103,19 @@ def multivariate_Gaussian_sample(N):
     #processdf.to_csv("sampledatamultivariate.csv")
     return processdfMV
 
+def multivariate_Gaussian_sample4uni(N):
+    data=MVGaussian(N)
+    processdataMV={"temp":data[:,0],"pressure":data[:,1],"jobarrival_Machine":data[:,2],"usedrawmaterial_amount":data[:,3],"flow":data[:,4]}
+    processdfMV=pd.DataFrame(processdataMV)
+    #processdf.to_csv("sampledatamultivariate.csv")
+    return data
+
 
 
 
 def univariate_sample(N):
-    processdata={"temp":normal(N),"pressure":uniform(N),"jobarrival_Machine":poisson(N),"usedrawmaterial_amount":expon(N),"timetaken_transport":geometric(N),"energy":mixeddistribution(N)}
+    MVG=multivariate_Gaussian_sample4uni(N)
+    processdata={"temp":MVG[:,0],"pressure":uniform(N),"items_processed":MVG[:,1],"usedrawmaterial_amount":expon(N),"timetaken_transport":geometric(N),"powerconsumption":mixeddistribution(N)}
     print(processdata)
     processdf=pd.DataFrame(processdata)
     processdf.to_csv("sampledatajun13.csv")
