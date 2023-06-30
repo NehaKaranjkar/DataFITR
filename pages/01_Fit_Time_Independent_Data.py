@@ -236,7 +236,7 @@ def IM_uni(df):
         with dtype_col:
             #st.caption("Data type of the columns in the dataset")
             st.markdown("""   """)
-            st.markdown('<p class="big-font">Data ype of the columns in the dataset', unsafe_allow_html=True)           
+            st.markdown('<p class="big-font">Data type of the columns in the dataset', unsafe_allow_html=True)           
             st.dataframe(dfinfo(df))
         if len(list(df.columns))>1:
             fig= plt.figure(figsize=(15, 15))
@@ -512,6 +512,7 @@ def IM_uni(df):
                         st.markdown("""   """)
                         kdeh=st.slider("Choose an appropriate smoothing parameter, h for KDE plot",5,200,2*bins,key="kdeh")
                         kdecentre,kdepdf,h=kde_silverman_both.kde_func(df[inpvar], inpvar, kdeh)
+                        #restyp,kdefinresult,kdeplotdata,pval=my_function(df[inpvar],distlist,[['norm']],datatyp,inpvar,bins,'ks',kdeh)
                         restyp,finresult,plotdata,pval=my_function(df[inpvar],distlist,distributions,datatyp,inpvar,bins,'ks',kdeh)
                         #dfkde=pd.DataFrame({'kdecentre':kdecentre,"kdepdf":kdepdf})
                         #dfkde=dfkde.set_index('kdecentre')
@@ -527,6 +528,11 @@ def IM_uni(df):
                         #st.line_chart(dfkde)
                 st.markdown('<p class="big-font">Goodness of fit values(Lower is better)', unsafe_allow_html=True)
                 if goodnessoffit:
+                    #kdesse=kdefinresult[kdefinresult['Test']=='kde']['SSE']
+                    #indexkde=finresult[finresult['Test']=='kde'].index
+                    #st.write(finresult,kdefinresult)
+                    #finresult.loc[indexkde,'SSE']=kdesse
+                    #st.write(finresult,kdesse)
                     result_df = finresult.sort_values(by = goodnessoffit)
                     up_df=result_df.copy()
                     #up_df['var']=filename
@@ -731,7 +737,7 @@ def IM_uni(df):
 
 def main():
     
-    st.set_page_config(page_title="DataFITR",page_icon="📈",layout="wide")
+    #st.set_page_config(page_title="DataFITR",page_icon="📈",layout="wide")
 
 
 
@@ -746,7 +752,7 @@ def main():
     - [Input Modeling for non correlated & time independent data](#input-modeling-for-non-correlated-&-time-independent-data)
     ''', unsafe_allow_html=True)
 
-    st.sidebar.image("./MISC/datafitrlogo.PNG", use_column_width=True)
+    #st.sidebar.image("./MISC/datafitrlogo.PNG", use_column_width=True)
     
     st.sidebar.subheader("Fitting Time Independent Data")
     
