@@ -737,7 +737,7 @@ def IM_uni(df):
 
 def main():
     
-    #st.set_page_config(page_title="DataFITR",page_icon="📈",layout="wide")
+    st.set_page_config(page_title="DataFITR",page_icon="📈",layout="wide")
 
 
 
