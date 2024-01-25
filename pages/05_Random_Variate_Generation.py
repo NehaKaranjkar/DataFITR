@@ -98,7 +98,7 @@ def generate(dist):
 st.set_page_config(page_title="DataFITR",page_icon="📈",layout="wide")            
 st.subheader("Random Variate Generation")
 st.markdown("---")    
-st.sidebar.header("Random Variate Generation")
+#st.sidebar.header("Random Variate Generation")
 #st.sidebar.image("/home/lekshmi/Downloads/DataFitter/MISC/datafitrlogo.PNG", use_column_width=True)   
 st.sidebar.image("./MISC/datafitrlogo.PNG", use_column_width=True)     
             

@@ -11,6 +11,7 @@ from scipy import stats
 import matplotlib.pyplot as plt
 
 import numpy as np
+from statsmodels.tsa.arima_process import ArmaProcess
 
 def genrvs_old(N):
     distributionlist=[i+1 for i in range(5)]
@@ -95,6 +96,12 @@ def MVGaussian(N):
         np.zeros(d_sample), sim_cov, size=n_sample)
     return data
 
+def MVGaussian_positive(N):
+    
+    mean=[2,3]
+    cov=[[2.0, 0.3], [0.3, 0.5]]
+    data  = np.random.multivariate_normal(mean, cov, N)
+    return data
 
 def multivariate_Gaussian_sample(N):
     data=MVGaussian(N)
@@ -110,7 +117,12 @@ def multivariate_Gaussian_sample4uni(N):
     #processdf.to_csv("sampledatamultivariate.csv")
     return data
 
-
+def multivariate_Gaussian_sample(N):
+    data=MVGaussian(N)
+    processdataMV={"temp":data[:,0],"pressure":data[:,1],"items_processed":geometric(N),"usedrawmaterial_amount":data[:,3],"flow":data[:,4],"powerconsumption":mixeddistribution(N)}
+    processdfMV=pd.DataFrame(processdataMV)
+    #processdf.to_csv("sampledatamultivariate.csv")
+    return processdfMV
 
 
 def univariate_sample(N):
@@ -122,5 +134,44 @@ def univariate_sample(N):
     return processdf
 
 
+def TimeSeriesGen(N):
+    n=N
+    ar3 = np.array([3])
+    
+    # specify the weights : [1, 0.9, 0.3, -0.2]
+    ma3 = np.array([1, 0.9, 0.3, -0.2])
+    
+    # simulate the process and generate 1000 data points
+    ARMA03 = ArmaProcess(ar3, ma3).generate_sample(nsample=n)
+    
+    
+    
+    ar1 = np.array([1, 0.6])
+    ma1 = np.array([1, -0.2])
+    ARMA11 = ArmaProcess(ar1, ma1).generate_sample(nsample=n)
+    ar3 = np.array([1, 0.9, 0.3, -0.2])
+    ma = np.array([3])
+    ARMA30 = ArmaProcess(ar3, ma).generate_sample(nsample=n)
+    ar2 = np.array([1, 0.6, 0.4])
+    ma2 = np.array([1, -0.2, -0.5])
+    
+    ARMA22 = ArmaProcess(ar2, ma2).generate_sample(nsample=n)
+    
+    processdataTS={"Stockprice":ARMA22,"GasPrice":ARMA30,"dailytemp":ARMA11,"dailytraffic":ARMA03}
+    processdfTS=pd.DataFrame(processdataTS)
+    return processdfTS
 
+def arbitrary_MV_samples(N):
+    data=MVGaussian_positive(N)
+    
+    
+    #teardrop
+    xt=scipy.stats.norm.rvs(0,5,N)
+    yt=[float(scipy.stats.norm.rvs(i,np.abs(i),1)) for i in xt]
+    
+    processdata={"temp":data[:,0],"pressure":data[:,1],"powerconsumption":xt,"flow":yt}
+    
+    arb_df=pd.DataFrame(processdata)
+    return arb_df
+    
                         

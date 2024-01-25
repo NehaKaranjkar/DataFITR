@@ -24,8 +24,8 @@ import numpy as np
 import pylab as py
 import warnings
 warnings.filterwarnings('ignore')
-#from IM import kde_silverman_both
-import kde_silverman_both
+from IM import kde_silverman_both
+#import kde_silverman_both
 import scipy.stats as stats
 import statistics
 import scipy
@@ -33,7 +33,8 @@ import statsmodels.api
 import math
 import pandas as pd 
 import streamlit as st
-import listparamsofdistributions
+#import listparamsofdistributions
+from IM import listparamsofdistributions
 
 import re
 
@@ -88,7 +89,7 @@ class modelmatch:
             return(len(self.data)/sum(self.data),0)
         else:
             #print(distribution,type(distribution))
-            print(distribution)
+            #print(distribution)
             k=getattr(stats,distribution)
             return k.fit(self.data)
         
@@ -733,7 +734,7 @@ def getcontinuousdist():
         continuous_all.remove(i)
     return continuous_all
     
-''''continuous_popular=['expon','norm','lognorm','triang','uniform','weibull_min','gamma']
+'''continuous_popular=['expon','norm','lognorm','triang','uniform','weibull_min','gamma']
 discrete_popular=['binom','poisson','geom']
 
 continuous_all=listparamsofdistributions.getcontinuousdist()
@@ -745,7 +746,7 @@ continuous_all=listparamsofdistributions.getcontinuousdist()
 
 df=pd.read_csv("sample_data.csv")
 data=df['temp']
-y= modelmatch(data,'continuous','Weibull distribution',49,'ks',['continuous'],[continuous_all])
+y= modelmatch(data,'continuous','Weibull distribution',49,'ks',['continuous'],[continuous_popular])
 y.bestfit(['continuous'],[continuous_all])
 y.printresult()
 '''
