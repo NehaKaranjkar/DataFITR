@@ -38,7 +38,7 @@ import numpy as np
 #from statsmodels.tsastattools import adfuller
 import seaborn as sns
 from scipy.stats import pearsonr #to calculate correlation coefficient
-import plotly.express as px
+#import plotly.express as px
 def to_csv(df):
     data_csv = df.to_csv(path_or_buf=None, sep=',', index=False) 
     return data_csv
