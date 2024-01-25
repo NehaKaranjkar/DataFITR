@@ -19,7 +19,7 @@ import streamlit as st
 import pandas as pd
 import scipy.stats as stats,time
 from io import StringIO
-import plotly.graph_objects as go
+#import plotly.graph_objects as go
 #sys.path.append('/home/lekshmi/Downloads/my_app/IM') 
 sys.path.append('./IM') 
 #import modular_IM
