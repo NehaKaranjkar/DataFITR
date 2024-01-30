@@ -242,28 +242,29 @@ def IM_MVA(df):
     with col2:
         selected_y_axis=st.selectbox("y-axis", [a for a in jdf_collist if (a!=selected_x_axis)])
     
-    num_bins_jdf=st.slider("Select the number of bins to create grids",1,200,50,key='binstojdf')
-    JDFans=JDF_bivariate.to_JDF(df[[selected_x_axis,selected_y_axis]],num_bins_jdf)
-    copula=JDFans[0]
-    dic_bins=JDFans[1]
-    x=[]
-    y=[]
-    cols=list(dic_bins.keys())
-    for i in copula.keys():
-        lower=i[0]-1
-        upper=i[1]-1
-        x.append(dic_bins[cols[0]][lower])
-        y.append(dic_bins[cols[1]][upper])
-        
     
-            
-    z=[i/sum(copula.values()) for i in copula.values()]
         
         
    
     
-    plot_jdf,plot_contr=st.columns(2)
+    plot_contr,plot_jdf=st.columns(2)
     with plot_jdf:
+        num_bins_jdf=st.slider("Select the number of bins to create grids for joint distribution",1,200,50,key='binstojdf')
+        JDFans=JDF_bivariate.to_JDF(df[[selected_x_axis,selected_y_axis]],num_bins_jdf)
+        copula=JDFans[0]
+        dic_bins=JDFans[1]
+        x=[]
+        y=[]
+        cols=list(dic_bins.keys())
+        for i in copula.keys():
+            lower=i[0]-1
+            upper=i[1]-1
+            x.append(dic_bins[cols[0]][lower])
+            y.append(dic_bins[cols[1]][upper])
+            
+        
+                
+        z=[i/sum(copula.values()) for i in copula.values()]
         fig = plt.figure(figsize = (10, 10))
         ax = plt.axes(projection ="3d")
         #ax=Axes3D(fig)
@@ -279,10 +280,11 @@ def IM_MVA(df):
         st.pyplot(fig)
         #st.plotly_chart(fig)
     with plot_contr:
+        st.caption("Scatter plot of the raw values of the selected columns")
         fig1=plt.figure(figsize=(10,10))
         a=sns.jointplot(x=selected_x_axis,y=selected_y_axis,data=df)
         a.plot_marginals(sns.rugplot, height=-.15, color='black', clip_on=False)
-        a.plot_joint(sns.kdeplot, color='black', levels=7)
+        #a.plot_joint(sns.kdeplot, color='black', levels=7)
         #a.set_xlabel(selected_x_axis,fontsize=15)
         #a.set_ylabel(selected_x_axis,fontsize=15)
         st.pyplot(a)
