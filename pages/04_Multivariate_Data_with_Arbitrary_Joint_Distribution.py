@@ -297,26 +297,39 @@ def IM_MVA(df):
     if multivarsA_inp:
         
         df1=df[multivarsA_inp]
-        matrix_F = df1.copy(deep=True)
-        
-        for i in matrix_F.columns:
-            X_column_i = matrix_F[i]
-            x_sort_i, F_i = cdf(X_column_i)
+        df_cdfvals = df1.copy(deep=True)
+        df1=df_cdfvals.copy()
+        for i in df_cdfvals.columns:
+            col = df_cdfvals[i]
+            x_sort_i, F_i = cdf(col)
             #print(matrix_F)
-            matrix_F[i] = [F_i[np.where(x_sort_i == z)[0][0]] for z in X_column_i]
-            #print(matrix_F)
-        dicc_freq_tables = {}
+            F_cdf=[]
+            for val in col:
+                cdfval=np.where(x_sort_i==val)[0][0]
+                F_cdf.append(F_i[cdfval])
+            df_cdfvals[i]=F_cdf
+        print(df_cdfvals)
+
+        cdf_data_dict = {}
         num_bins=st.slider("select bin size",5,1000,50,key='groupbins')
         for i in df1.columns:
-            X_column_i = df[i]
+            count,binedges=np.histogram(df1[i],num_bins)
+            pmf_col_dict={}
+            for k in range(len(binedges)-1):
+                binlim=tuple([binedges[k],binedges[k+1]])
+                pmf_col_dict[binlim]=count[k]
+            cumpmf=np.cumsum(list(pmf_col_dict.values()))
+            cdfpmf=cumpmf/cumpmf[-1]
             
-            simple_table = frequency_table(X_column_i, bins=num_bins)
-            complete_table = pd.DataFrame.from_dict(simple_table, orient='index',columns=['Freq_abs'])
-            freq_rel = [j/len(X_column_i) for j in simple_table.values()]
-            complete_table['Freq_rel'] = freq_rel
-            complete_table['Freq_acum'] = np.cumsum(freq_rel)
+            cdf_col_dict={}
+            ival=0
+            for k in pmf_col_dict:
+                cdf_col_dict[k]=cdfpmf[ival]
+                ival+=1
+              
+            cdf_data_dict[i] = cdf_col_dict
         
-            dicc_freq_tables[i] = complete_table
+        
         
         
         output= f""" 
@@ -328,42 +341,37 @@ def IM_MVA(df):
         
         
        with open('cdf_MVA.pkl','rb') as fp:
-           dicc_freq_tables=pickle.load(fp)
+           cdf_data_dict=pickle.load(fp)
        with open('matrix.pkl','rb') as fp:
-           matrix_F=pickle.load(fp)
-       selectedcolumns=list(dicc_freq_tables.keys())
-       X_generated = pd.DataFrame(columns=selectedcolumns)
-       list_N = np.random.randint(low=0, high=len(matrix_F), size=10)   
-       for sub_n in list_N:
+           df_cdfvals=pickle.load(fp)
+       df_columns=list(cdf_data_dict.keys())
+       data_gen = pd.DataFrame(columns=df_columns)
+       rand_ind = np.random.randint(low=0, high=len(df_cdfvals), size=300)   
+       for n in rand_ind:
+           synth_gen = []
+           for i in df_columns:
+               h = df_cdfvals[i][n]
+               binintr=-1
+               for l in cdf_data_dict[i]:
+                   #print(h, cdf_data_dict[i][l],i,l)
+                   if h<=cdf_data_dict[i][l]:
+                       binintr=l
+                       break
+               synth_gen.append(np.random.uniform(low=binintr[0], high=binintr[1], size=1)[0])
 
-           random_generated = []
-
-           for i in selectedcolumns:
-
-               h = matrix_F.loc[sub_n, i]
-               # inverval or freq_table where is the percentile
-               interval = next((j for j in range(0, len(dicc_freq_tables[i]['Freq_acum'])) if dicc_freq_tables[i]['Freq_acum'][j] >= (h)), None)
-               if interval == None:
-                   interval = -1
-
-               lim_inf = dicc_freq_tables[i].index[interval][0]
-               lim_sup = dicc_freq_tables[i].index[interval][1]
-               random_generated.append(np.random.uniform(low=lim_inf, high=lim_sup, size=1)[0])
-
-           random_generated = np.array(random_generated).T
-           
-           random_generated = pd.DataFrame([random_generated], columns=selectedcolumns)
-           X_generated = pd.concat([X_generated, random_generated], ignore_index=True)
+           synth_gen = np.array(synth_gen).T
+           synth_gen = pd.DataFrame([synth_gen], columns=df_columns)
+           data_gen = pd.concat([data_gen, synth_gen], ignore_index=True)
             """
         code_MVA,download_MVA=st.columns(2)
         with code_MVA:
             st.code(output)
         with download_MVA:
             st.caption("Use the pickle file along with the code to generate data")
-            st.download_button("Click to download the cdf_MVA.pkl file", data=pickle.dumps(dicc_freq_tables),file_name="cdf_MVA.pkl")
-            st.download_button("Click to download the matrix.pkl file", data=pickle.dumps(matrix_F),file_name="matrix.pkl")
+            st.download_button("Click to download the cdf_MVA.pkl file", data=pickle.dumps(cdf_data_dict),file_name="cdf_MVA.pkl")
+            st.download_button("Click to download the matrix.pkl file", data=pickle.dumps(df_cdfvals),file_name="matrix.pkl")
             picklfilename="MVA"+'pickle'
-            st.session_state[picklfilename]=pickle.dumps(dicc_freq_tables)
+            st.session_state[picklfilename]=pickle.dumps(cdf_data_dict)
     
     
     
