@@ -73,14 +73,10 @@ def main():
     
         
     st.markdown("""---""")
-    st.subheader("Authors")
-    st.text('Lekshmi P., IIT Goa \nDr.Neha Karanjkar, IIT Goa')
-    
-    st.markdown("""---""")
     st.subheader("Source code")
     st.markdown("[(Github link of the repo)](https://github.com/NehaKaranjkar/DataFITR)")
     
-     # embed streamlit docs in a streamlit app
+    # embed streamlit docs in a streamlit app
     #components.iframe("http://52.62.118.188:8501")
     
 
