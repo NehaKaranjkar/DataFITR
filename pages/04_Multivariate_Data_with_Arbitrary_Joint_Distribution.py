@@ -276,7 +276,7 @@ def IM_MVA(df):
         ax.set_xlabel(selected_x_axis, fontweight ='bold')
         ax.set_ylabel(selected_y_axis, fontweight ='bold')
         ax.set_zlabel("Probability", fontweight ='bold')
-        plt.title("3D scatter plot")
+        #plt.title("3D scatter plot")
         st.pyplot(fig)
         #st.plotly_chart(fig)
     with plot_contr:
