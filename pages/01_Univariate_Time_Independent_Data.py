@@ -349,7 +349,7 @@ def IM_uni(df):
         #check#dataname = st.text_input("Enter a name for the dataset",value="sample.csv",key='dataname')  
         st.subheader("Fitting data columnwise")
         st.warning("Choose a data column from the CSV file to fit/model")
-        inpvar = st.selectbox("data column", df.columns)
+        inpvar = st.selectbox("Data column to fit", df.columns)
         
         
         st.sidebar.write("Attribute chosen by the user to perform input modeling is",inpvar)
@@ -359,9 +359,9 @@ def IM_uni(df):
         #st.write(default_ind)
         
         if datatype_list[default_ind]=='Real-Valued':
-            datatype_option = st.selectbox('Datatype of the column:', ['Real-Valued','Integer-Valued'],index=default_ind)
+            datatype_option = st.selectbox('Datatype of the column', ['Real-Valued','Integer-Valued'],index=default_ind)
         else:
-            datatype_option = st.selectbox('Datatype of the column:', datatype_list,index=default_ind)
+            datatype_option = st.selectbox('Datatype of the column', datatype_list,index=default_ind)
             st.warning("The datatype of the column is inferred from the data. Click on the dropdown if you wish to change it.")
         Continuous_All=listparamsofdistributions.getcontinuousdist()
         Continuous_Popular=['expon','norm','lognorm','triang','uniform','weibull_min','gamma']

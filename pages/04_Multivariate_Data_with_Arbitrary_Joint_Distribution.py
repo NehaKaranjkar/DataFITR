@@ -70,7 +70,7 @@ def main():
     
     #st.sidebar.image("/home/lekshmi/Downloads/DataFitter/MISC/datafitrlogo.PNG", use_column_width=True)
     st.sidebar.image("./MISC/datafitrlogo.PNG", use_column_width=True)
-    st.subheader("Fitting Arbitrary Multivariate Data")
+    st.subheader("Fitting Multivariate Data with Arbitrary joint distributions")
     st.markdown("---")
     
     data_col,button_col=st.columns(2)
@@ -234,7 +234,7 @@ def IM_MVA(df):
         corrlist=set(corrlist)
         
     #plot to visualise joint density distribution
-    st.write("Select the components to visualize a 3D scatter plot")
+    st.write("Select the components to visualize a data")
     col1,col2=st.columns(2)
     jdf_collist=list(df.columns)
     with col1:
