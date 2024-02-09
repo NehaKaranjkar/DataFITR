@@ -234,7 +234,7 @@ def IM_MVA(df):
         corrlist=set(corrlist)
         
     #plot to visualise joint density distribution
-    st.write("Select the components to visualize a data")
+    st.write("Select the components to visualize data")
     col1,col2=st.columns(2)
     jdf_collist=list(df.columns)
     with col1:
