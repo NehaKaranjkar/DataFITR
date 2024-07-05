@@ -32,7 +32,7 @@ def main():
     st.image('./MISC/sampledata.PNG',width=600,caption="Expected CSV file format")
     st.sidebar.markdown('''
     # Sections
-    - [Time Independent Data](Univariate_Time_Independent_Data))
+    - [Time Independent Data](Univariate_Time_Independent_Data)
     - [Time Series Data ](Univariate_Time_Series_Data)
     - [Multivariate Data with Gaussian Joint Distribution Function](Multivariate_Data_with_Gaussian_Joint_Distribution)
     - [Multivariate Data with Arbitrary Joint Distribution Function](Multivariate_Data_with_Arbitrary_Joint_Distribution)
