@@ -32,10 +32,10 @@ def main():
     st.image('./MISC/sampledata.PNG',width=600,caption="Expected CSV file format")
     st.sidebar.markdown('''
     # Sections
-    - [Time Independent Data](#time-independent-data(1D)")
-    - [Time Series Data ](#time-series-data(1D))
-    - [Multivariate Data with Gaussian Joint Distribution Function](#multivariate-data-with-gaussian-joint-distribution-function)
-    - [Multivariate Data with Arbitrary Joint Distribution Function](#multivariate-data-with-arbitrary-joint-distribution-function)
+    - [Time Independent Data](Univariate_Time_Independent_Data))
+    - [Time Series Data ](Univariate_Time_Series_Data)
+    - [Multivariate Data with Gaussian Joint Distribution Function](Multivariate_Data_with_Gaussian_Joint_Distribution)
+    - [Multivariate Data with Arbitrary Joint Distribution Function](Multivariate_Data_with_Arbitrary_Joint_Distribution)
     
     
     ''', unsafe_allow_html=True)
@@ -64,7 +64,7 @@ def main():
     st.subheader("Multivariate Data with Arbitrary Joint Distribution Function ")
     st.markdown('<p class="big-font">Modeller can use this for fitting multivariate data with arbitrary joint distribution.The tool allows the user to visualise the joint distribution of any of the two random variates in the dataset. </p>', unsafe_allow_html=True)
     
-    st.markdown("[Click here for fitting Multivariate Data with Arbitrary JDF](https://datafitr.streamlit.app/Multivariate_Data_Arbitrary_JDF)")
+    st.markdown("[Click here for fitting Multivariate Data with Arbitrary JDF](https://datafitr.streamlit.app/https://datafitr.streamlit.app/Multivariate_Data_with_Arbitrary_Joint_Distribution)")
     
     
     #st.header("Modeling of arbitrary Multivariate Data")
