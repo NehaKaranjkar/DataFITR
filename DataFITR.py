@@ -52,7 +52,7 @@ def main():
     st.subheader("Univariate Time Series Data ")
     st.markdown('<p class="big-font">User can use this if the successive observations in the data are dependent. Currently, only stationary time series data can be fitted using this tab. IT also allows the user to check if the data is stationary and allows to check the p and q lags visually using pacf and acf plots</p>', unsafe_allow_html=True)
     
-    st.markdown("[Click here for fitting Time Series Data](https://datafitr.streamlit.app/Univariate)Time_Series_Data)")
+    st.markdown("[Click here for fitting Time Series Data](https://datafitr.streamlit.app/Univariate_Time_Series_Data)")
     
 
         #st.image(image, caption='Sampledataset.csv')
