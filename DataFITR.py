@@ -47,24 +47,24 @@ def main():
     st.markdown('<p class="big-font">Time Independent Data is the one for which there is no relation between successive observations of an attribute or a process variable.</p>', unsafe_allow_html=True)
     st.markdown('<p class="big-font">The user supplies the data in a csv format which is observations of a certain random variable and the fitted tool finds the distribution that best fits that data from a range of standard discrete and continuous distributions. This tool supports 97 continuous distributions and 3 discrete distributions. It also allows the user to fit an aribtrary distribution which does not belong to any standard distribution or which is a mixture of 2 or more distributions. It also gives a visualization of the fit of user data with various distributions. Tool also outputs the goodness of fit values for all the distributions that it supports.</p>', unsafe_allow_html=True)
     st.markdown('<p class="big-font">The tool infers the type of data(real valued or integer valued) from it. User can also use this to fit categorical data which are converted into numerical values.</p>', unsafe_allow_html=True)
-    st.markdown("[Click here for fitting Time Independent Data](https://datafitr.streamlit.app/Time_Independent_Data(1D))")
+    st.markdown("[Click here for fitting Time Independent Data](https://datafitr.streamlit.app/Univariate_Time_Independent_Data)")
     
     st.subheader("Univariate Time Series Data ")
     st.markdown('<p class="big-font">User can use this if the successive observations in the data are dependent. Currently, only stationary time series data can be fitted using this tab. IT also allows the user to check if the data is stationary and allows to check the p and q lags visually using pacf and acf plots</p>', unsafe_allow_html=True)
     
-    st.markdown("[Click here for fitting Time Series Data](https://datafitr.streamlit.app/Time_Series_Data(1D))")
+    st.markdown("[Click here for fitting Time Series Data](https://datafitr.streamlit.app/Univariate)Time_Series_Data)")
     
 
         #st.image(image, caption='Sampledataset.csv')
     st.subheader("Multivariate Data with Gaussian Joint Distribution Function")
     #st.header("Modeling of Multivariate Gaussian Data")
     st.markdown('<p class="big-font">Modeller can use this if the data to fit is multivariate and each of its components follow a univariate normal distribution and there is a relation between columns of a dataset. The tool prints the Goodness of fit test results of the columns selected with that of a normal distribution. It calculates the mean and covariance of the data and produces the code to generate multivariate gaussian distribution</p>', unsafe_allow_html=True)
-    st.markdown("[Click here for fitting Multivariate Data with Gaussian JDF](https://datafitr.streamlit.app/Multivariate_Data_Gaussian_JDF)")
+    st.markdown("[Click here for fitting Multivariate Data with Gaussian JDF](https://datafitr.streamlit.app/Multivariate_Data_Gaussian_Joint_Distribution)")
     
     st.subheader("Multivariate Data with Arbitrary Joint Distribution Function ")
     st.markdown('<p class="big-font">Modeller can use this for fitting multivariate data with arbitrary joint distribution.The tool allows the user to visualise the joint distribution of any of the two random variates in the dataset. </p>', unsafe_allow_html=True)
     
-    st.markdown("[Click here for fitting Multivariate Data with Arbitrary JDF](https://datafitr.streamlit.app/https://datafitr.streamlit.app/Multivariate_Data_with_Arbitrary_Joint_Distribution)")
+    st.markdown("[Click here for fitting Multivariate Data with Arbitrary JDF](https://datafitr.streamlit.app/Multivariate_Data_with_Arbitrary_Joint_Distribution)")
     
     
     #st.header("Modeling of arbitrary Multivariate Data")
