@@ -59,7 +59,7 @@ def main():
     st.subheader("Multivariate Data with Gaussian Joint Distribution Function")
     #st.header("Modeling of Multivariate Gaussian Data")
     st.markdown('<p class="big-font">Modeller can use this if the data to fit is multivariate and each of its components follow a univariate normal distribution and there is a relation between columns of a dataset. The tool prints the Goodness of fit test results of the columns selected with that of a normal distribution. It calculates the mean and covariance of the data and produces the code to generate multivariate gaussian distribution</p>', unsafe_allow_html=True)
-    st.markdown("[Click here for fitting Multivariate Data with Gaussian JDF](https://datafitr.streamlit.app/Multivariate_Data_Gaussian_Joint_Distribution)")
+    st.markdown("[Click here for fitting Multivariate Data with Gaussian JDF](https://datafitr.streamlit.app/Multivariate_Data_with_Gaussian_Joint_Distribution)")
     
     st.subheader("Multivariate Data with Arbitrary Joint Distribution Function ")
     st.markdown('<p class="big-font">Modeller can use this for fitting multivariate data with arbitrary joint distribution.The tool allows the user to visualise the joint distribution of any of the two random variates in the dataset. </p>', unsafe_allow_html=True)
